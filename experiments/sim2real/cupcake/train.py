@@ -11,7 +11,7 @@ import hydra
 import torch
 from omegaconf import OmegaConf
 
-from tuco.baseline_artifacts import load_curated_selection
+from tuco.artifacts import load_selection
 
 from .dataset import _load_real_rollouts
 from .workspace import CupCakeCotrainWorkspace
@@ -39,7 +39,7 @@ def main() -> None:
         parser.error(f"refusing to overwrite an existing run: {args.run_dir}")
     if not torch.cuda.is_available():
         parser.error("formal training requires CUDA")
-    load_curated_selection(
+    load_selection(
         args.selection,
         expected_budget=args.selected_states,
         expected_candidates=args.physical_states,

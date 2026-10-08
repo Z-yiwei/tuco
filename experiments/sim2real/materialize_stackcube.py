@@ -15,7 +15,7 @@ import h5py
 import numpy as np
 import zarr
 
-from tuco.baseline_artifacts import load_curated_selection
+from tuco.artifacts import load_selection
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -106,7 +106,7 @@ def main() -> None:
     if output.exists():
         parser.error(f"output already exists: {output}")
 
-    selected = load_curated_selection(
+    selected = load_selection(
         args.selected_ids, expected_budget=600, expected_candidates=1200
     ).astype(np.int64)
     selected = np.sort(selected)

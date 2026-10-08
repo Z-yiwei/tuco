@@ -1,4 +1,4 @@
-"""Select Diffusion-Policy trajectories from a prepared feature artifact."""
+"""Select single-simulator Diffusion-Policy trajectories using baseline methods."""
 
 from __future__ import annotations
 
@@ -63,9 +63,6 @@ def main(argv: Optional[list[str]] = None) -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--budget", type=int, required=True)
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument(
-        "--setting", choices=("single-sim", "sim2real"), default="single-sim"
-    )
     args = parser.parse_args(argv)
     if args.output_dir.exists():
         parser.error(f"output already exists: {args.output_dir}")
@@ -80,7 +77,7 @@ def main(argv: Optional[list[str]] = None) -> None:
         scores: np.ndarray | None = None
         metadata: dict[str, object] = {
             "seed": args.seed,
-            "setting": args.setting,
+            "setting": "single-sim",
             "feature_artifact": str(args.input.resolve()),
             "selection_unit": "complete_trajectory",
         }

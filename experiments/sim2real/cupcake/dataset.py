@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from tuco.baseline_artifacts import load_curated_selection
+from tuco.artifacts import load_selection
 
 from .canonical_absolute_dataset import (
     CAMERAS,
@@ -124,7 +124,7 @@ class CuratedCupCakeMixedDataset(CupCakeAbsoluteGroupedImageDataset):
         split_ratio = float(kwargs.get("val_ratio", 0.04))
         super().__init__(*args, **kwargs)
 
-        selected = load_curated_selection(
+        selected = load_selection(
             Path(selected_state_ids_path),
             expected_budget=600,
             expected_candidates=1200,

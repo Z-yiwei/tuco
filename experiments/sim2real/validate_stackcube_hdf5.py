@@ -10,7 +10,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 
-from tuco.baseline_artifacts import load_curated_selection
+from tuco.artifacts import load_selection
 
 
 def main() -> None:
@@ -18,7 +18,7 @@ def main() -> None:
     parser.add_argument("--hdf5", type=Path, required=True)
     parser.add_argument("--selected-ids", type=Path, required=True)
     args = parser.parse_args()
-    selected = load_curated_selection(
+    selected = load_selection(
         args.selected_ids, expected_budget=600, expected_candidates=1200
     ).astype(np.int64)
     selected = np.sort(selected)

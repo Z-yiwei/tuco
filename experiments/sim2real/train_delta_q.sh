@@ -56,7 +56,7 @@ mkdir -p "$(dirname -- "${CACHE}")"
 
 : "${SELECTION:?paper-facing training requires SELECTION}"
 [[ -f "${SELECTION}" ]] || { printf 'missing input: %s\n' "${SELECTION}" >&2; exit 1; }
-METHOD="${METHOD:-$("${PY}" -c 'import json,sys; print(json.load(open(sys.argv[1]))["method"])' "$(dirname -- "${SELECTION}")/metadata.json")}"
+METHOD=tuco
 if [[ "${mode}" == filtered ]]; then
   : "${SOURCE_ZARR:?filtered mode requires SOURCE_ZARR}"
   [[ -e "${SOURCE_ZARR}" ]] || { printf 'missing input: %s\n' "${SOURCE_ZARR}" >&2; exit 1; }

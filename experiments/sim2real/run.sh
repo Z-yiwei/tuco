@@ -65,7 +65,7 @@ run_training() {
   : "${RUN_DIR:?set RUN_DIR in ${CONFIG}}"
   SELECTION="${SELECTION:-${OUTPUT_ROOT}/selection/selected_ids.json}"
   [[ -f "${SELECTION}" ]] || { printf 'missing selection: %s\n' "${SELECTION}" >&2; exit 1; }
-  METHOD="${METHOD:-$("${PY}" -c 'import json,sys; print(json.load(open(sys.argv[1]))["method"])' "$(dirname -- "${SELECTION}")/metadata.json")}"
+  METHOD=tuco
   case "${TASK}" in
     peg)
       : "${SOURCE_HDF5:?set SOURCE_HDF5 in ${CONFIG}}"
