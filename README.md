@@ -168,3 +168,19 @@ bash experiments/single_sim/run_eval.sh configs/launch/single_sim.env
 conda activate omnireset_release
 bash experiments/sim2sim/run_eval.sh configs/launch/sim2sim.env
 ```
+
+## Citation
+
+If you find TUCO useful in your research, please cite our paper:
+
+```bibtex
+@misc{zhu2026tuco,
+  title         = {{TUCO}: Curating Simulation Demonstrations for Sim-to-Real Robot Policy Co-Training},
+  author        = {Ning Zhu and Mengfei Zhao and Yikai Tang and Zhangyujie Sun and Peihao Li and Dongyue Ni and Jindou Jia and Jianfei Yang},
+  year          = {2026},
+  eprint        = {2610.05407},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2610.05407}
+}
+```
