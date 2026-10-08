@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
@@ -28,14 +27,6 @@ from cupcake_mujoco_rl_env import (  # noqa: E402
 )
 from cupcake_side_lying_resets import load_npz as load_reset_npz  # noqa: E402
 from franka_policy import FrankaPolicy  # noqa: E402
-
-
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def parse_args() -> argparse.Namespace:
@@ -201,9 +192,7 @@ def main() -> None:
         "source_zarr": str(source),
         "source_panel": source_store.attrs.get("panel"),
         "reset_pool_npz": str(reset_path),
-        "reset_pool_sha256": sha256(reset_path),
         "checkpoint": str(checkpoint),
-        "checkpoint_sha256": sha256(checkpoint),
         "teacher_checkpoint_iteration": policy.ckpt_iter,
         "num_demos": args.num_demos,
         "episode_steps": args.steps,

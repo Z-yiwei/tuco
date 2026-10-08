@@ -34,6 +34,7 @@ for rank in "${!gpu_ids[@]}"; do
       --expected_receptive_usd_basename plate.usd --keep_dynamics_dr \
       --headless --device cuda:0 env.scene.insertive_object=cupcake \
       env.scene.receptive_object=plate env.observations.policy.enable_corruption=False \
+      'env.scene.table.init_state.pos=[0.4,0.0,-0.881]' \
       env.scene.robot.actuators.panda_hand.stiffness=1000.0 \
       env.scene.robot.actuators.panda_hand.damping=14.0 \
       env.scene.robot.actuators.panda_hand.effort_limit_sim=60.0 \

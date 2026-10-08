@@ -3135,3 +3135,39 @@ class implicit_to_explicit_swap(ManagerTermBase):
             return {"actuator_swapped": False, "scale_progress": self._sysid_term.scale_progress}
 
         return self._do_swap(env)
+
+
+def reset_joints_to_default_and_hold(
+    env: ManagerBasedEnv,
+    env_ids: torch.Tensor,
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+) -> None:
+    """Reset selected joints and synchronize their implicit-PD targets."""
+    asset: Articulation = env.scene[asset_cfg.name]
+    if asset_cfg.joint_ids != slice(None):
+        positions = asset.data.default_joint_pos[
+            env_ids[:, None], asset_cfg.joint_ids
+        ].clone()
+        velocities = asset.data.default_joint_vel[
+            env_ids[:, None], asset_cfg.joint_ids
+        ].clone()
+    else:
+        positions = asset.data.default_joint_pos[env_ids].clone()
+        velocities = asset.data.default_joint_vel[env_ids].clone()
+
+    asset.write_joint_state_to_sim(
+        positions,
+        velocities,
+        joint_ids=asset_cfg.joint_ids,
+        env_ids=env_ids,
+    )
+    asset.set_joint_position_target(
+        positions,
+        joint_ids=asset_cfg.joint_ids,
+        env_ids=env_ids,
+    )
+    asset.set_joint_velocity_target(
+        velocities,
+        joint_ids=asset_cfg.joint_ids,
+        env_ids=env_ids,
+    )

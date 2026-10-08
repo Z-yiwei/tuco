@@ -1,3 +1,5 @@
+"""Test aggregation behavior."""
+
 import numpy as np
 
 from tuco.aggregation import aggregate_feature_sums, aggregate_pairwise_samples

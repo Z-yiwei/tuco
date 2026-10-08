@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import importlib.metadata
 import json
 import os
@@ -35,12 +34,6 @@ DEFAULT_PARAMETERS = {
 }
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def atomic_write(path: Path, content: str) -> None:
@@ -233,7 +226,7 @@ def main() -> None:
                 "name": name,
                 "kind": kind,
                 "file": path.name,
-                "sha256": sha256(path),
+
                 "vertices": int(len(mesh.vertices)),
                 "faces": int(len(mesh.faces)),
                 "volume_m3": float(abs(mesh.volume)),
@@ -257,7 +250,7 @@ def main() -> None:
         ),
         "piece_prefix": args.piece_prefix,
         "source": str(source),
-        "source_sha256": sha256(source),
+
         "coacd_version": importlib.metadata.version("coacd"),
         "parameters": parameters,
         "source_before_repair": before,

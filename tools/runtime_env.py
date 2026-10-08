@@ -1,5 +1,4 @@
 """Resolve project runtime packages strictly inside this release."""
-import importlib.util
 import os
 from pathlib import Path
 

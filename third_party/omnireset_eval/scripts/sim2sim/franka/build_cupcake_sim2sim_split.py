@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import uuid
@@ -20,21 +19,8 @@ def require(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
-def array_sha256(value: np.ndarray) -> str:
-    value = np.ascontiguousarray(value)
-    digest = hashlib.sha256()
-    digest.update(value.dtype.str.encode("ascii"))
-    digest.update(np.asarray(value.shape, dtype=np.int64).tobytes())
-    digest.update(value.view(np.uint8))
-    return digest.hexdigest()
 
 
 def stack(value: Any) -> torch.Tensor:
@@ -77,8 +63,8 @@ def summarize_panel(
         "count": int(len(indices)),
         "reachable_count": int(reachable[indices].sum()),
         "indices": indices.tolist(),
-        "indices_sha256": array_sha256(indices.astype(np.int64)),
-        "raw_state_sha256": array_sha256(selected),
+
+
         "insertive_xyz_min_m": selected[:, 31:34].min(axis=0).astype(float).tolist(),
         "insertive_xyz_max_m": selected[:, 31:34].max(axis=0).astype(float).tolist(),
         "receptive_xyz_min_m": selected[:, 44:47].min(axis=0).astype(float).tolist(),
@@ -194,9 +180,9 @@ def main() -> None:
         "seed": int(args.seed),
         "reset_state": {
             "path": str(reset_path),
-            "sha256": file_sha256(reset_path),
+
             "count": int(total),
-            "raw_state_sha256": array_sha256(raw_state),
+
         },
         "success_contract": {
             "position_threshold_m": 0.005,
@@ -224,7 +210,6 @@ def main() -> None:
         "overlap": {"index": 0, "exact_raw_state": 0},
         "builder_script": str(Path(__file__).resolve()),
     }
-    report["builder_script_sha256"] = file_sha256(Path(__file__).resolve())
     atomic_write_json(output_path, report)
     print(json.dumps(report, indent=2, sort_keys=True))
 

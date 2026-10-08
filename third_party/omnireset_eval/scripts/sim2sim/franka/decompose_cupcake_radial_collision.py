@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import uuid
@@ -19,12 +18,6 @@ DEFAULT_SOURCE = ROOT / "scripts/sim2sim/assets_mjcf/cupcake/cupcake_collision.o
 DEFAULT_OUTPUT = ROOT / "scripts/sim2sim/assets_mjcf/cupcake/convex_radial32"
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def atomic_write(path: Path, content: str) -> None:
@@ -119,7 +112,7 @@ def main() -> None:
             {
                 "name": name,
                 "file": path.name,
-                "sha256": sha256(path),
+
                 "vertices": int(len(mesh.vertices)),
                 "faces": int(len(mesh.faces)),
                 "volume_m3": float(abs(mesh.volume)),
@@ -144,7 +137,7 @@ def main() -> None:
             "are vertical"
         ),
         "source": str(source),
-        "source_sha256": sha256(source),
+
         "source_watertight_before_repair": source_watertight,
         "source_watertight_after_repair": bool(source_mesh.is_watertight),
         "sector_count": args.sectors,

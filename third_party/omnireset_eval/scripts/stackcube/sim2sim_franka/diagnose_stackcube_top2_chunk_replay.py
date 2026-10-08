@@ -19,7 +19,6 @@ the replay.  The output Zarr and JSON both retain the complete candidate audit.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -69,12 +68,6 @@ REQUIRED_ATTRS = (
 )
 
 
-def file_sha256(path: str | Path) -> str:
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as handle:
-        for block in iter(lambda: handle.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def jsonable(value: Any) -> Any:
@@ -91,43 +84,10 @@ def jsonable(value: Any) -> Any:
     return value
 
 
-def canonical_json_sha256(value: Any) -> str:
-    payload = json.dumps(
-        jsonable(value), sort_keys=True, separators=(",", ":"), ensure_ascii=True
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
 
 
-def array_sha256(array, block_rows: int = 1024) -> str:
-    """Hash a Zarr array's logical values independent of chunk compression."""
-    digest = hashlib.sha256()
-    digest.update(str(tuple(array.shape)).encode("ascii"))
-    digest.update(np.dtype(array.dtype).str.encode("ascii"))
-    if array.ndim == 0:
-        digest.update(np.ascontiguousarray(array[...]).tobytes(order="C"))
-        return digest.hexdigest()
-    for begin in range(0, int(array.shape[0]), block_rows):
-        block = np.ascontiguousarray(array[begin : begin + block_rows])
-        digest.update(block.tobytes(order="C"))
-    return digest.hexdigest()
 
 
-def source_fingerprint(store) -> tuple[str, dict[str, str]]:
-    logical_hashes = {
-        path: array_sha256(store[path]) for path in sorted(REQUIRED_ARRAYS)
-    }
-    descriptor = {
-        "root_attrs": dict(store.attrs),
-        "arrays": {
-            path: {
-                "shape": list(store[path].shape),
-                "dtype": np.dtype(store[path].dtype).str,
-                "logical_sha256": logical_hashes[path],
-            }
-            for path in sorted(REQUIRED_ARRAYS)
-        },
-    }
-    return canonical_json_sha256(descriptor), logical_hashes
 
 
 def validate_source(store) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -423,7 +383,7 @@ def support_provenance() -> dict[str, dict[str, Any]]:
         ).resolve(),
     }
     return {
-        name: {"path": str(path), "sha256": file_sha256(path)}
+        name: {"path": str(path)}
         for name, path in modules.items()
     }
 
@@ -435,11 +395,7 @@ def external_file_provenance(store, attr_name: str) -> dict[str, Any]:
         path = Path(raw_path).expanduser()
         record["exists"] = path.is_file()
         if path.is_file():
-            record["sha256"] = file_sha256(path)
             record["size_bytes"] = path.stat().st_size
-    stored_md5 = store.attrs.get(f"{attr_name}_md5")
-    if stored_md5 is not None:
-        record["source_attr_md5"] = str(stored_md5)
     return record
 
 
@@ -539,8 +495,6 @@ def write_outputs(
     store,
     audits: list[dict[str, Any]],
     effective_configs: list[dict[str, Any]],
-    source_metadata_sha256: str,
-    source_array_sha256: dict[str, str],
 ) -> tuple[Path, Path, dict[str, Any]]:
     output = Path(args.out).resolve()
     manifest_path = output_json_path(output)
@@ -575,8 +529,8 @@ def write_outputs(
     )
     source_provenance = {
         "path": str(source_path),
-        "metadata_and_required_arrays_sha256": source_metadata_sha256,
-        "required_array_logical_sha256": source_array_sha256,
+
+
         "root_attrs": dict(store.attrs),
         "checkpoint": external_file_provenance(store, "checkpoint"),
         "reset_state": external_file_provenance(store, "reset_state"),
@@ -663,9 +617,7 @@ def write_outputs(
                 "status": "complete",
                 "protocol_id": PROTOCOL_ID,
                 "source_zarr": str(source_path),
-                "source_metadata_and_required_arrays_sha256": (
-                    source_metadata_sha256
-                ),
+
                 "source_task": str(store.attrs["task"]),
                 "source_checkpoint": str(store.attrs["checkpoint"]),
                 "start_episode": int(args.start_episode),
@@ -819,8 +771,6 @@ def main() -> None:
         f"controller={json.dumps(controller_profile, sort_keys=True)}",
         flush=True,
     )
-    source_digest, source_array_hashes = source_fingerprint(store)
-    print(f"[provenance] source_fingerprint={source_digest}", flush=True)
 
     audits: list[dict[str, Any]] = []
     effective_configs: list[dict[str, Any]] = []
@@ -852,8 +802,6 @@ def main() -> None:
         store,
         audits,
         effective_configs,
-        source_digest,
-        source_array_hashes,
     )
     result = {
         "output_zarr": str(output),

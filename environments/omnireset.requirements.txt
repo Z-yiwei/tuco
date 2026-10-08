@@ -1,4 +1,4 @@
-# Captured from installed runtime; install with --no-deps.
+# Pinned runtime dependencies; install with --no-deps.
 absl-py==2.5.0
 annotated-types==0.7.0
 antlr4-python3-runtime==4.9.3
@@ -6,7 +6,7 @@ anyio==4.14.1
 asciitree==0.3.3
 certifi==2026.6.17
 charset-normalizer==3.3.2
-click==8.1.7
+click==8.2.1
 cloudpickle==3.1.2
 diffusers==0.39.0
 dill==0.4.1
@@ -59,7 +59,7 @@ nvidia-nvjitlink-cu12==12.8.61
 nvidia-nvtx-cu12==12.8.55
 omegaconf==2.3.1
 opencv-python-headless==4.11.0.86
-packaging==23.0
+packaging==24.2
 pandas==3.0.3
 pillow==11.3.0
 platformdirs==4.10.0

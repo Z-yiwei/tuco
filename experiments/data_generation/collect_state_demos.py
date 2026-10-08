@@ -1,34 +1,7 @@
-"""Collect Franka task_0 state demos WITH teacher distribution (mean + std) for KL distillation.
-
-This is a copy of ``scripts/collect_state_demos.py`` with one addition: alongside the
-deterministic policy mean (stored as ``data/action``, identical convention to the DDPM
-pipeline) it also records the rsl_rl Gaussian actor's per-step std as ``data/action_std``.
-Those two fields are what the MLP-Gaussian student needs to fit ``KL(teacher || student)``
-the way the original OmniReset distillation does.
-
-Notes
------
-* ``policy = runner.get_inference_policy()`` returns ``act_inference`` (the deterministic
-  MEAN), so the action we step with — and store under ``data/action`` — IS the teacher mean.
-* Standard rsl_rl PPO uses a STATE-INDEPENDENT std (an ``nn.Parameter`` of shape ``[act_dim]``),
-  so we grab ``actor_critic.std`` once and broadcast it to every step. We print it at startup
-  as a sanity check. If a future run uses a state-dependent std (gSDE), switch to per-step
-  ``actor_critic.action_std`` — see the ``--per_step_std`` flag below.
-
-Example:
-    CUDA_VISIBLE_DEVICES=3 python scripts/franka_kl_distill/collect_demos_kl.py \\
-        --checkpoint logs/.../model_4574.pt \\
-        --num_envs 256 --num_demos 10000 \\
-        --output datasets/franka_task0_kl_10k.zarr \\
-        --headless \\
-        env.scene.robot.actuators.panda_hand.stiffness=1000.0 \\
-        env.scene.robot.actuators.panda_hand.damping=14.0 \\
-        env.scene.robot.actuators.panda_hand.effort_limit_sim=60.0
-"""
+"""Collect successful state demonstrations and teacher action distributions."""
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
@@ -173,7 +146,6 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
         "reset_dataset_dir": env_cfg.events.reset_from_reset_states.params.get("dataset_dir"),
         "seed": int(args_cli.seed),
         "teacher_checkpoint": os.path.abspath(args_cli.checkpoint),
-        "teacher_checkpoint_sha256": _sha256(args_cli.checkpoint),
         "expected_obs_dim": int(args_cli.expected_obs_dim),
         "expected_act_dim": int(args_cli.expected_act_dim),
         "expected_episode_steps": int(args_cli.expected_episode_steps),
@@ -182,6 +154,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
         "episode_length_s": float(env_cfg.episode_length_s),
         "decimation": int(env_cfg.decimation),
         "sim_dt": float(env_cfg.sim.dt),
+        "table_position": list(env_cfg.scene.table.init_state.pos),
         "argv": ORIGINAL_ARGV,
         "dynamics_randomization": "kept" if args_cli.keep_dynamics_dr else "disabled",
         "disabled_events": disabled_events,
@@ -196,8 +169,6 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
     runner.load(args_cli.checkpoint)
     policy = runner.get_inference_policy(device=env.unwrapped.device)
     actor = runner.alg.policy  # rsl_rl ActorCritic (PPO stores it as `.policy`, not `.actor_critic`)
-
-    device = env.unwrapped.device
 
     # Teacher std: read per-step from the populated distribution
     # (``actor.action_std`` == ``distribution.stddev``). Correct for ALL noise
@@ -263,13 +234,15 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
 
         obs, _, dones, _ = env.step(actions)
 
-        success = progress_term().success  # (N,) bool
+        # Transfer flags once per step instead of synchronizing each environment.
+        success = progress_term().success.detach().cpu().numpy()
+        done_flags = dones.detach().cpu().numpy()
         for i in range(num_envs):
-            if bool(success[i].item()):
+            if bool(success[i]):
                 buf_succ_seen[i] = True
 
         for i in range(num_envs):
-            if bool(dones[i].item()):
+            if bool(done_flags[i]):
                 T = len(buf_obs[i])
                 if (
                     buf_succ_seen[i]
@@ -298,6 +271,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
                 buf_succ_seen[i] = False
 
         step_count += 1
+        if step_count % args_cli.expected_episode_steps == 0:
+            print(f"[INFO] steps={step_count}, successful demos={len(completed_demos)}")
 
     print(f"[INFO] Done. Collected {len(completed_demos)} successful demos over {step_count} env steps.")
     print(f"[INFO] Rejected episode lengths: {rejected_episode_lengths}")
@@ -307,14 +282,6 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
         )
     save_zarr(completed_demos, args_cli.output, effective_contract)
     env.close()
-
-
-def _sha256(path):
-    digest = hashlib.sha256()
-    with open(path, "rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def save_zarr(demos, output_path, effective_contract):

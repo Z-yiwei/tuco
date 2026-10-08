@@ -8,7 +8,6 @@ same model builder, controller, and physics settings as A-demo collection.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
@@ -34,14 +33,6 @@ import stackcube_offline_error_cotrain as Offline
 PHYSICS_SUBSTEPS = 16
 JACOBIAN_POINT = "physx_com"
 FINGER_VELOCITY_LIMITS = (0.05, 0.04)
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as file:
-        for block in iter(lambda: file.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def json_default(value):
@@ -230,7 +221,6 @@ def main() -> None:
     summary = {
         "definition": "live MuJoCo A eval using the exact A-collector matched runtime/model/controller; release at first proxy pose",
         "checkpoint": str(checkpoint_path),
-        "checkpoint_sha256": sha256_file(checkpoint_path),
         "runtime_source": str(runtime_path),
         "runtime_source_protocol": source.attrs.get("protocol_id", ""),
         "episodes": n,
@@ -278,7 +268,6 @@ def main() -> None:
             "success_pos_threshold": float(Stack.SUCCESS_POS_THRESH),
             "success_ori_threshold": float(Stack.SUCCESS_ORI_XY_THRESH),
             "checkpoint": str(checkpoint_path),
-            "checkpoint_sha256": sha256_file(checkpoint_path),
             "eval_contract_id": "mujoco-stackcube-matched-runtime-stable-release-v1",
             "simulator": "MuJoCo",
             "metric": "stable_after_release_success",

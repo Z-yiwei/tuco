@@ -7,8 +7,6 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from tuco.baseline_scores import cupid_scores
-
 from .data import episode_bounds
 
 

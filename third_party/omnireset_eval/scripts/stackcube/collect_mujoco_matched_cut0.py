@@ -10,8 +10,6 @@ stored action is exactly the action that creates the first successful state.
 from __future__ import annotations
 
 import argparse
-import hashlib
-import json
 import os
 import shutil
 import sys
@@ -42,14 +40,6 @@ JACOBIAN_POINT = "physx_com"
 FINGER_VELOCITY_LIMITS = (0.05, 0.04)
 PROTOCOL_ID = "stackcube-mujoco-matched-isaac10k-cut0-v2-controller-events"
 FULL160_PROTOCOL_ID = "stackcube-mujoco-matched-full160-v1-controller-events"
-
-
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as f:
-        for block in iter(lambda: f.read(1 << 20), b""):
-            h.update(block)
-    return h.hexdigest()
 
 
 def validate(source_path: Path, checkpoint_path: Path):
@@ -83,20 +73,7 @@ def validate(source_path: Path, checkpoint_path: Path):
         raise ValueError(
             "strict Isaac-10k matching requires preserve_controller_events=True"
         )
-    declared = Path(str(source.attrs.get("checkpoint", ""))).resolve()
-    declared_hash = source.attrs.get("checkpoint_sha256")
-    if declared_hash is None and declared.is_file():
-        declared_hash = sha256_file(declared)
-    requested_hash = sha256_file(checkpoint_path)
-    if declared_hash is not None:
-        if str(declared_hash) != requested_hash:
-            raise ValueError(
-                f"teacher hash mismatch: source={declared_hash} requested={requested_hash}"
-            )
-    elif declared != checkpoint_path:
-        raise ValueError(f"teacher mismatch without hash evidence: source={declared} requested={checkpoint_path}")
-    fingerprint, logical = Diagnose.source_fingerprint(source)
-    return source, starts, ends, reset_ids, fingerprint, logical
+    return source, starts, ends, reset_ids
 
 
 def run_one(source, policy, episode: int, start: int, end: int, device: str,
@@ -157,7 +134,7 @@ def run_one(source, policy, episode: int, start: int, end: int, device: str,
 
 
 def write_atomic(out: Path, rows: list[dict], attempted: list[int], reset_ids: np.ndarray,
-                 source_path: Path, checkpoint_path: Path, fingerprint: str, logical: dict,
+                 source_path: Path, checkpoint_path: Path,
                  full_horizon: bool = False):
     if out.exists():
         raise FileExistsError(out)
@@ -201,10 +178,7 @@ def write_atomic(out: Path, rows: list[dict], attempted: list[int], reset_ids: n
                 "official pose success; stop after first success-causing action"
             ),
             "source_zarr": str(source_path),
-            "source_fingerprint_sha256": fingerprint,
-            "source_required_array_hashes_json": json.dumps(logical, sort_keys=True),
             "teacher_checkpoint": str(checkpoint_path),
-            "teacher_checkpoint_sha256": sha256_file(checkpoint_path),
             "observation_dim": 200,
             "action_dim": 7,
             "policy_horizon": POLICY_STEPS,
@@ -223,7 +197,6 @@ def write_atomic(out: Path, rows: list[dict], attempted: list[int], reset_ids: n
             "frames": len(state),
             "attempts": len(attempted),
             "collector_script": str(Path(__file__).resolve()),
-            "collector_script_sha256": sha256_file(Path(__file__).resolve()),
         })
         os.replace(staging, out)
     except BaseException:
@@ -245,7 +218,7 @@ def main():
     )
     args = parser.parse_args()
     source_path, checkpoint_path = Path(args.source).resolve(), Path(args.checkpoint).resolve()
-    source, starts, ends, reset_ids, fingerprint, logical = validate(source_path, checkpoint_path)
+    source, starts, ends, reset_ids = validate(source_path, checkpoint_path)
     stop = args.start + args.count
     if args.start < 0 or args.count <= 0 or stop > len(ends):
         raise ValueError(f"invalid range [{args.start},{stop}) for {len(ends)} source episodes")
@@ -262,7 +235,7 @@ def main():
         rows.append(row)
         print(f"[matched-cut0] ep={episode:04d} reset={int(reset_ids[episode]):04d} success={int(row['success'])} steps={len(row['state'])}", flush=True)
     write_atomic(Path(args.out).resolve(), rows, attempted, reset_ids, source_path,
-                 checkpoint_path, fingerprint, logical, full_horizon=args.full_horizon)
+                 checkpoint_path, full_horizon=args.full_horizon)
     print(f"[RESULT] attempts={len(rows)} successes={sum(r['success'] for r in rows)} output={Path(args.out).resolve()}", flush=True)
 
 

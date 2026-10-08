@@ -1,3 +1,5 @@
+"""Test baseline artifacts behavior."""
+
 import json
 
 import numpy as np

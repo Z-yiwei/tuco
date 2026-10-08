@@ -1,9 +1,4 @@
-"""Additional trajectory-level data-curation baselines for Robomimic.
-
-The functions in this module deliberately operate on numpy arrays and global
-Robomimic demonstration IDs.  Diffusion-policy gradients are produced by a
-separate cache script, so selection never changes the policy training code.
-"""
+"""Additional trajectory-level data-curation baselines for Robomimic."""
 
 import math
 from collections import Counter, defaultdict

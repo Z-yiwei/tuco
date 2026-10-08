@@ -69,6 +69,10 @@ run_if_missing() {
     printf '[skip] %s\n' "${output}"
   else
     run "$@"
+    [[ "${DRY_RUN}" == 1 || -e "${output}" ]] || {
+      printf 'command returned without creating %s\n' "${output}" >&2
+      exit 1
+    }
   fi
 }
 
@@ -98,6 +102,7 @@ collect_peg_raw() {
       --expected_receptive_usd_basename peg_hole_big.usd --max_steps 200000 \
       --seed "${SEED}" --headless --device cuda:0 \
       env.scene.insertive_object=peg env.observations.policy.enable_corruption=False \
+      'env.scene.table.init_state.pos=[0.4,0.0,-0.881]' \
       env.scene.robot.actuators.panda_hand.stiffness=1000.0 \
       env.scene.robot.actuators.panda_hand.damping=14.0 \
       env.scene.robot.actuators.panda_hand.effort_limit_sim=60.0
@@ -126,6 +131,7 @@ collect_stackcube_raw() {
       --expected_receptive_usd_basename receptive_cube.usd \
       --headless --device cuda:0 \
       env.scene.insertive_object=cube env.scene.receptive_object=cube \
+      'env.scene.table.init_state.pos=[0.4,0.0,-0.881]' \
       env.scene.robot.actuators.panda_hand.stiffness=1000.0 \
       env.scene.robot.actuators.panda_hand.damping=14.0 \
       env.scene.robot.actuators.panda_hand.effort_limit_sim=60.0
@@ -266,9 +272,11 @@ fi
 if [[ "${STAGE}" == rollouts || "${STAGE}" == all ]]; then
   collect_rollouts
 fi
-if [[ "${DRY_RUN}" != 1 && "${STAGE}" != raw ]]; then
+if [[ "${DRY_RUN}" != 1 ]]; then
+  rollout_args=()
+  [[ "${STAGE}" == raw ]] || rollout_args+=(--rollouts "${ROLLOUT_ZARR}")
   "${PY_MUJOCO}" "${RELEASE_ROOT}/scripts/validate_data.py" sim2sim \
     --task "${TASK}" --target "${TARGET_ZARR}" --source "${SOURCE_ZARR}" \
-    --rollouts "${ROLLOUT_ZARR}"
+    "${rollout_args[@]}"
 fi
 printf '[done] sim2sim %s data: %s\n' "${TASK}" "${OUT}"

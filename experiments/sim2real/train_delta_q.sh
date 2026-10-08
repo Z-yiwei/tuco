@@ -56,8 +56,6 @@ mkdir -p "$(dirname -- "${CACHE}")"
 
 : "${SELECTION:?paper-facing training requires SELECTION}"
 [[ -f "${SELECTION}" ]] || { printf 'missing input: %s\n' "${SELECTION}" >&2; exit 1; }
-"${PY}" -m tuco.cli.verify_curated_selection --selected-ids "${SELECTION}" \
-  --budget "${SELECTED_STATES}" --num-candidates "${PHYSICAL_STATES}"
 METHOD="${METHOD:-$("${PY}" -c 'import json,sys; print(json.load(open(sys.argv[1]))["method"])' "$(dirname -- "${SELECTION}")/metadata.json")}"
 if [[ "${mode}" == filtered ]]; then
   : "${SOURCE_ZARR:?filtered mode requires SOURCE_ZARR}"

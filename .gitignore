@@ -29,5 +29,6 @@ configs/launch/*.env
 
 /third_party/cupid/data/
 /third_party/cupid/outputs/
+/runtime/omnireset/outputs/
 # Small upstream package resources retained with the vendored SDK source.
 !runtime/omnireset/UWLab/_isaaclab/IsaacLab/source/isaaclab_tasks/isaaclab_tasks/direct/humanoid_amp/motions/*.npz

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -14,14 +13,6 @@ import numpy as np
 import zarr
 
 PROTOCOL_ID = "stackcube-mujoco-matched-full160-v1-controller-events"
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as file:
-        for block in iter(lambda: file.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def main() -> None:
@@ -66,7 +57,7 @@ def main() -> None:
         if group.attrs.get("protocol_id") != PROTOCOL_ID:
             raise ValueError(f"protocol mismatch: {path}")
         current = tuple(group.attrs.get(key) for key in (
-            "teacher_checkpoint_sha256", "success_position_threshold_m",
+            "success_position_threshold_m",
             "success_orientation_xy_threshold_rad", "post_success_rows", "release_rows",
         ))
         if invariant is None:
@@ -85,22 +76,22 @@ def main() -> None:
             raise ValueError(f"metadata length mismatch: {path}")
         if np.any((first_success < 1) | (first_success > 160)):
             raise ValueError(f"invalid first-success step: {path}")
-        fingerprint = str(group.attrs["source_fingerprint_sha256"])
+        source_name = str(group.attrs["source_zarr"])
         attempted.extend(
-            (fingerprint, int(ep))
+            (source_name, int(ep))
             for ep in np.asarray(group["meta/attempted_source_episode_index"], dtype=np.int32)
         )
         for i, (start, end) in enumerate(zip(starts, ends, strict=True)):
             records.append({
                 "source_episode": int(source_eps[i]), "reset": int(reset_ids[i]),
-                "first_success": int(first_success[i]), "fingerprint": fingerprint,
+                "first_success": int(first_success[i]), "source": source_name,
                 "state": np.asarray(group["data/state"][start:end]),
                 "action": np.asarray(group["data/action"][start:end]),
                 "action_std": np.asarray(group["data/action_std"][start:end]),
             })
     if len(attempted) != len(set(attempted)):
         raise ValueError("attempted source episodes overlap across shards")
-    identities = [(row["fingerprint"], row["source_episode"]) for row in records]
+    identities = [(row["source"], row["source_episode"]) for row in records]
     if len(identities) != len(set(identities)):
         raise ValueError("successful source episode identity is duplicated")
     records_before_action_gate = len(records)
@@ -120,8 +111,8 @@ def main() -> None:
         selected = [records[int(index)] for index in sorted(chosen.tolist())]
     else:
         reference = zarr.open(str(Path(args.reference_selection).resolve()), mode="r")
-        reference_fingerprints = np.asarray(
-            reference["meta/source_fingerprint_sha256"]
+        reference_sources = np.asarray(
+            reference["meta/source_runtime"]
         ).astype(str)
         reference_episodes = np.asarray(
             reference["meta/source_episode_index"], dtype=np.int32
@@ -132,18 +123,18 @@ def main() -> None:
                 f"{len(reference_episodes)} != {args.demos}"
             )
         by_identity = {
-            (row["fingerprint"], row["source_episode"]): row for row in records
+            (row["source"], row["source_episode"]): row for row in records
         }
         selected = []
         selected_identities = set()
-        for identity in zip(reference_fingerprints, reference_episodes.tolist(), strict=True):
+        for identity in zip(reference_sources, reference_episodes.tolist(), strict=True):
             row = by_identity.get(identity)
             if row is not None:
                 selected.append(row)
                 selected_identities.add(identity)
         replacements = [
             row for row in records
-            if (row["fingerprint"], row["source_episode"]) not in selected_identities
+            if (row["source"], row["source_episode"]) not in selected_identities
         ]
         missing = args.demos - len(selected)
         if len(replacements) < missing:
@@ -168,7 +159,7 @@ def main() -> None:
         root.create_dataset("data/action_std", data=action_std, chunks=(1024, 7))
         root.create_dataset("meta/episode_ends", data=np.arange(1, args.demos + 1, dtype=np.int64) * 160)
         root.create_dataset("meta/source_episode_index", data=np.asarray([r["source_episode"] for r in selected], dtype=np.int32))
-        root.create_dataset("meta/source_fingerprint_sha256", data=np.asarray([r["fingerprint"] for r in selected], dtype="S64"))
+        root.create_dataset("meta/source_runtime", data=np.asarray([r["source"] for r in selected], dtype=str))
         root.create_dataset("meta/reset_indices", data=np.asarray([r["reset"] for r in selected], dtype=np.int32))
         root.create_dataset("meta/first_success_step", data=np.asarray([r["first_success"] for r in selected], dtype=np.int32))
         root.create_dataset("meta/success", data=np.ones(args.demos, dtype=np.bool_))
@@ -187,10 +178,9 @@ def main() -> None:
                 if args.reference_selection is not None else None
             ),
             "source_zarr": "multiple runtime sources; see source_parts_json",
-            "runtime_source_fingerprints_json": json.dumps(sorted({r["fingerprint"] for r in records})),
+            "runtime_sources_json": json.dumps(sorted({r["source"] for r in records})),
             "source_parts_json": json.dumps([str(path) for path in paths]),
             "aggregator_script": str(Path(__file__).resolve()),
-            "aggregator_script_sha256": sha256_file(Path(__file__).resolve()),
         })
         os.replace(staging, out)
     except BaseException:

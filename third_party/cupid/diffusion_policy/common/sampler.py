@@ -179,7 +179,8 @@ def get_dataset_masks(
 
     # Dataset info.
     dataset_path = pathlib.Path(dataset_path)
-    dataset_name = dataset_path.parts[1]
+    dataset_families = {"robomimic", "hardware", "omnireset", "isaaclab", "co_training", "pusht"}
+    dataset_name = next((part for part in dataset_path.parts if part in dataset_families), "unknown")
     if dataset_name in ["robomimic", "hardware"]:
         task_name = dataset_path.parts[-3]
         task_type = dataset_path.parts[-2]
@@ -189,10 +190,10 @@ def get_dataset_masks(
     elif dataset_name == "pusht":
         task_name = dataset_name
         task_type = "ph"
-    elif dataset_path.parts[2] == "eval_save_episodes":
+    elif "eval_save_episodes" in dataset_path.parts:
         task_name = ""
         task_type = "ph"
-    elif dataset_path.parts[2] == "eval_save_episodes_real":
+    elif "eval_save_episodes_real" in dataset_path.parts:
         task_name = ""
         task_type = "ph_real"
     else:

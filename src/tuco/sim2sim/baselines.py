@@ -1,14 +1,9 @@
-"""Trajectory-level implementations of four additional curation baselines.
-
-The public API deliberately separates fixed-score methods (QoQ, PSD and
-DataMIL) from FAKTUAL, whose choice is a set-valued, budget-dependent result.
-All methods return indices into the original episode order of a Zarr pool.
-"""
+"""Trajectory-level implementations of four additional curation baselines."""
 from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Iterable, Sequence
+from typing import Sequence
 
 import numpy as np
 import torch
@@ -16,8 +11,6 @@ import torch
 from .data import NormStats, episode_bounds
 from .model import MLPBCPolicy
 
-
-SELECTION_FORMAT_VERSION = 1
 
 # The 200-D OmniReset observation is term-major with five history entries.
 # Retaining the newest entry of each term removes duplicated temporal history
@@ -33,12 +26,6 @@ OMNIRESET_CURRENT_STATE_INDICES = np.asarray(
     dtype=np.int64,
 )
 OMNIRESET_EE_POSITION_INDICES = np.asarray([134, 135, 136], dtype=np.int64)
-
-
-def descending_order(scores: np.ndarray) -> np.ndarray:
-    """Stable descending order with episode ID as the deterministic tie-break."""
-    scores = np.asarray(scores, dtype=np.float64)
-    return np.lexsort((np.arange(len(scores), dtype=np.int64), -scores)).astype(np.int64)
 
 
 def _sample_episode_frames(ends: np.ndarray, stride: int) -> tuple[np.ndarray, np.ndarray]:
@@ -208,7 +195,6 @@ def stochastic_entropy_greedy(
     rng = np.random.default_rng(seed)
     selected: list[int] = []
     remaining = np.ones(n, dtype=bool)
-    current_value = 0.0
     sample_size = int(math.ceil((n / budget) * math.log(1.0 / epsilon)))
     for _ in range(budget):
         available = np.flatnonzero(remaining)
@@ -226,7 +212,6 @@ def stochastic_entropy_greedy(
         assert best_id is not None
         selected.append(best_id)
         remaining[best_id] = False
-        current_value = best_value
     return np.asarray(selected, dtype=np.int64)
 
 
@@ -520,22 +505,3 @@ def datamil_metagradient_scores(
     val_loss = torch.square(val_prediction - target_actions[val_ids]).mean()
     (weight_gradient,) = torch.autograd.grad(val_loss, source_weights)
     return (-weight_gradient.detach().cpu().numpy()).astype(np.float32)
-
-
-def ranked_payload(
-    method: str,
-    scores: np.ndarray,
-    ends: np.ndarray,
-    *,
-    metadata: dict[str, np.ndarray | str | int | float],
-) -> dict[str, np.ndarray]:
-    payload: dict[str, np.ndarray] = {
-        "selection_format_version": np.int64(SELECTION_FORMAT_VERSION),
-        "method": np.array(method),
-        "selection_kind": np.array("fixed_ranking"),
-        "num_candidates": np.int64(len(ends)),
-        "scores": np.asarray(scores, dtype=np.float32),
-        "selected_order": descending_order(scores),
-    }
-    payload.update({key: np.asarray(value) for key, value in metadata.items()})
-    return payload

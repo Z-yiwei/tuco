@@ -1,3 +1,5 @@
+"""Test selector behavior."""
+
 import numpy as np
 
 from tuco.config import TucoConfig

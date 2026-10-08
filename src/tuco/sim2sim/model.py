@@ -1,10 +1,4 @@
-"""MLP-BC policy, EMA, and checkpoint IO.
-
-Network is byte-compatible with co-curation/train_mlp_bc.py (`MLPBCPolicy`) and
-sim2sim_cotrain/mlp_util.py (`MLP`): trunk = [obs*n_obs -> 1024 -> hidden ->
-hidden -> hidden] with a deterministic linear head named `action_head`.
-Checkpoints written here load in either of those codebases and vice-versa.
-"""
+"""MLP-BC policy, EMA, and checkpoint IO."""
 from __future__ import annotations
 
 import copy

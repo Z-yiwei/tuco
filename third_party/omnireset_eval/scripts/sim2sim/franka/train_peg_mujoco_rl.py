@@ -21,7 +21,6 @@ from __future__ import annotations
 import argparse
 import copy
 import glob
-import hashlib
 import json
 import os
 import random
@@ -91,12 +90,6 @@ DEFAULT_LOG_ROOT = WORKSPACE_ROOT / (
 )
 
 
-def file_sha256(path: str | Path) -> str:
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as handle:
-        for block in iter(lambda: handle.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def make_train_cfg(num_steps_per_env: int, save_interval: int) -> dict[str, Any]:
@@ -342,9 +335,9 @@ def main() -> None:
         "host": socket.gethostname(),
         "pid": os.getpid(),
         "parent_checkpoint": str(checkpoint),
-        "parent_checkpoint_sha256": file_sha256(checkpoint),
+
         "reward_reference_sources": [
-            {"path": str(path), "sha256": file_sha256(path)}
+            {"path": str(path)}
             for path in reward_sources
         ],
         "resume_checkpoint": str(resume) if resume else None,
@@ -352,7 +345,7 @@ def main() -> None:
             "mujoco_resume" if resume is not None else args.init_mode
         ),
         "reset_file": str(reset_file),
-        "reset_file_sha256": file_sha256(reset_file),
+
         "reset_rows": int(len(reset_pool)),
         "reset_selection": "uniform over complete fixed-home 3 cm train3200 pool",
         "runtime_sources": runtime_paths,
@@ -425,7 +418,7 @@ def main() -> None:
             transfer = {
                 "mode": "full_mujoco_rl_resume",
                 "resume": str(resume),
-                "resume_sha256": file_sha256(resume),
+
             }
             parity_error = None
         elif args.init_mode == "full_parent":
@@ -486,7 +479,7 @@ def main() -> None:
             "completed": True,
             "elapsed_s": elapsed,
             "final_checkpoint": str(final_checkpoint.resolve()),
-            "final_checkpoint_sha256": file_sha256(final_checkpoint),
+
             "final_iteration": int(runner.current_learning_iteration),
             "model_values_finite": True,
             "full_save_reload_passed": True,

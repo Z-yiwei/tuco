@@ -1,39 +1,7 @@
-"""Vision demo collect for KL distillation — records 3-camera RGB + privileged state +
-teacher (mean, std), so an IMAGE student can be distilled from the STATE teacher.
-
-Key trick: the state teacher (`model_6800`) needs its native ~200-dim history-concatenated
-state, but the RGB env's `policy` group is image-based. So we REASSIGN the RGB env's policy
-obs group to the State env's PolicyCfg in-script — the teacher then reads pure state via
-`policy(obs)`, while the raw uint8 images come from the `data_collection` group
-(`obs_buf["data_collection"]["{front,side,wrist}_rgb"]`, process_image=False → HWC uint8).
-The 200-dim policy state is also recorded as the aux-reconstruction target for the vision model.
-
-Saves only SUCCESSFUL episodes. Legacy OSC output uses 7-D EE/gripper
-actions and proprio. With ``--joint_target_bridge``, both become 8-D:
-``[q1..q7, gripper_width]`` and the stored action is the exact post-safety
-target passed to joint-position control.
-
-Output zarr:
-  data/{front_rgb, side_rgb, wrist_rgb}  uint8 (N,224,224,3)
-  data/{action(=teacher mean), action_std, state(200-dim privileged)}  float32
-  data/proprio  float32 (N,7 or 8) = deployable robot-only state
-      (The 200-dim `state` is privileged — it contains insertive/receptive object poses — so it
-       is kept only as the DP aux target, NOT fed to a vision policy.)
-  meta/episode_ends
-
-Example (cameras forced on; RGB rendering is heavy → fewer envs):
-    CUDA_VISIBLE_DEVICES=1 python scripts/franka_kl_distill/collect_vision_kl.py \\
-        --teacher_ckpt logs/.../2026-06-12_11-01-50/model_6800.pt \\
-        --camera_setup real --num_envs 32 --num_demos 200 \\
-        --output datasets/franka_vision_kl.zarr --headless \\
-        env.scene.robot.actuators.panda_hand.stiffness=1000.0 \\
-        env.scene.robot.actuators.panda_hand.damping=14.0 \\
-        env.scene.robot.actuators.panda_hand.effort_limit_sim=60.0
-"""
+"""Collect RGB observations and expert actions from IsaacSim rollouts."""
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import os
@@ -41,13 +9,6 @@ import sys
 
 from isaaclab.app import AppLauncher
 
-
-def _file_sha256(path: str) -> str:
-    digest = hashlib.sha256()
-    with open(path, "rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 parser = argparse.ArgumentParser(description="Vision demo collect (RGB + teacher labels).")
 parser.add_argument("--task", default="OmniReset-FrankaFr3Gripper-RelCartesianOSC-RGB-DataCollection-v0")
@@ -556,7 +517,6 @@ if args_cli.successful_repeats_per_state:
         parser.error("--successful_repeats_per_state cannot be combined with --target_attempts")
 if not os.path.isfile(args_cli.teacher_ckpt):
     parser.error(f"teacher checkpoint is missing: {args_cli.teacher_ckpt}")
-_TEACHER_CHECKPOINT_SHA256 = _file_sha256(args_cli.teacher_ckpt)
 _EXPECTED_TEACHER_SHA256 = os.environ.get("TEACHER_SHA256")
 if (
     _EXPECTED_TEACHER_SHA256 is not None
@@ -1452,7 +1412,6 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
             else "franka_mimic_official"
         ),
         "teacher_checkpoint": args_cli.teacher_ckpt,
-        "teacher_checkpoint_sha256": _TEACHER_CHECKPOINT_SHA256,
         "teacher_policy_action_mode": (
             "stochastic_sample" if args_cli.stochastic_teacher_actions else "deterministic_mean"
         ),
@@ -1577,7 +1536,6 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
             for camera_name in ("front", "side", "wrist")
         },
         "reset_types": list(reset_types),
-        "reset_artifact_sha256": os.environ.get("RESET_ARTIFACT_SHA256"),
         "reset_mode": "online_continuous" if args_cli.online_xy5_t0_reset else "state_pool",
         "reset_rigid_object_position_offsets": _event_param(
             env_cfg, "reset_from_reset_states", "rigid_object_position_offsets"
@@ -1600,7 +1558,6 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg):
             {
                 "curtain_branch": "color_only",
                 "hdri_config_path": sample_hdri_config,
-                "hdri_config_sha256": _file_sha256(sample_hdri_config),
             }
             if sample_hdri_config
             else None

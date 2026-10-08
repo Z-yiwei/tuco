@@ -49,7 +49,6 @@ def evaluate_peg(args: argparse.Namespace, checkpoints: list[Path], env: dict[st
     payloads = json.loads(raw.read_text(encoding="utf-8"))
     rows = []
     for payload in payloads:
-        checkpoint = Path(payload["checkpoint"])
         rows.append({
             **payload,
             "reset_ids": [

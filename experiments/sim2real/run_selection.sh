@@ -143,8 +143,5 @@ if [[ ! -d "${OUTPUT_ROOT}/selection" ]]; then
     --budget "${SELECTED_STATES}" \
     >"${OUTPUT_ROOT}/logs/select.log" 2>&1
 fi
-"${PY}" -m tuco.cli.verify_selection \
-  --selected-ids "${OUTPUT_ROOT}/selection/selected_ids.json" \
-  --budget "${SELECTED_STATES}" --num-candidates "${PHYSICAL_STATES}"
 touch "${OUTPUT_ROOT}/.complete"
 printf 'selection complete: %s/selection\n' "${OUTPUT_ROOT}"

@@ -1,3 +1,5 @@
+"""Test release contracts behavior."""
+
 import os
 import subprocess
 import sys
@@ -40,7 +42,7 @@ def test_sim2real_repeat_and_real_rollout_contract():
     expected = {
         "peg": (10, 1, "delta_joint_step_v1"),
         "stackcube": (10, 2, "delta_joint_step_v1"),
-        "cupcake": (9, 8, "absolute_joint_target_binary_width_v1"),
+        "cupcake": (10, 8, "absolute_joint_target_binary_width_v1"),
     }
     for task, (rollouts, action_steps, representation) in expected.items():
         config = _toml(f"configs/sim2real/{task}.toml")

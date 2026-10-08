@@ -1,8 +1,6 @@
 <div align="center">
 
-# TUCO
-
-### Curating Simulation Demonstrations for Sim-to-Real Robot Policy Co-Training
+# TUCO: Curating Simulation Demonstrations for Sim-to-Real Robot Policy Co-Training
 
 <p>
   Ning Zhu<sup>1,*</sup> &nbsp;·&nbsp;
@@ -49,89 +47,122 @@
 <p align="center"><em>Overview of TUCO.</em></p>
 
 <p align="center">
-  <a href="#environment">Environment</a> &nbsp;·&nbsp;
-  <a href="#data">Data</a> &nbsp;·&nbsp;
-  <a href="#experiments">Experiments</a> &nbsp;·&nbsp;
+  <a href="#environmental-setup">Setup</a> &nbsp;·&nbsp;
+  <a href="#data-preparation">Data</a> &nbsp;·&nbsp;
+  <a href="#data-selection">Selection</a> &nbsp;·&nbsp;
+  <a href="#training">Training</a> &nbsp;·&nbsp;
+  <a href="#evaluation">Evaluation</a> &nbsp;·&nbsp;
   <a href="https://tuco-curation.github.io/">Project Page</a> &nbsp;·&nbsp;
   <a href="https://arxiv.org/abs/2610.05407">Paper</a>
 </p>
 
 ---
 
-## Environment
+## Environmental Setup
 
-Use Linux, Conda, and an NVIDIA GPU. Run commands from the repository root.
+Use Ubuntu, Conda. Run commands from the repository root.
 
 ```bash
+sudo apt-get install -y build-essential libosmesa6-dev libgl1-mesa-dev libglew-dev patchelf
+
 # Single-simulator experiments
 bash scripts/setup_environment.sh cupid
 
 # Sim-to-sim and sim-to-real experiments
 bash scripts/setup_environment.sh omnireset
+
+# IsaacSim data collection (separate environment)
+bash scripts/setup_isaacsim.sh
 ```
 
-IsaacSim data generation requires IsaacSim 5.1. Environment specifications are
-provided in `environments/`.
+Environment specifications are provided in `environments/`. IsaacSim collection
+requires a system meeting the [IsaacSim requirements](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/requirements.html).
 
-## Data
-
-- **RoboMimic:** Download the public low-dimensional demonstrations:
-  ```bash
-  conda activate cupid
-  bash scripts/generate_data.sh single-sim third_party/cupid/data
-  ```
-- **OmniReset:** Obtain public assets and pretrained policies from the
-  [official resources](https://uw-lab.github.io/UWLab/main/source/publications/omnireset/index.html).
-  Data-generation entry points are provided in `scripts/generate_data.sh`.
-- **Real robot:** Sim-to-real experiments additionally use user-collected
-  real demonstrations and scoring rollouts.
-
-Set data and checkpoint paths in the launch configurations below.
-
-## Experiments
-
-Copy the relevant configuration template and edit its task, paths, and curation
-budget before running.
+## Data Preparation
 
 ### Single-simulator
 
+Download the [RoboMimic datasets](https://diffusion-policy.cs.columbia.edu/data/training/robomimic_lowdim.zip) into `third_party/cupid/data/`:
+
 ```bash
 conda activate cupid
+bash scripts/generate_data.sh single-sim third_party/cupid/data
 cp configs/launch/single_sim.env.example configs/launch/single_sim.env
-bash experiments/single_sim/run.sh configs/launch/single_sim.env
 ```
 
-Set `SPLIT=filter` for filtering or `SPLIT=select` for selection.
+Set the task, output paths, and filtering or selection budget in `single_sim.env`.
 
 ### Sim-to-sim
 
+Place task assets and Franka experts under `artifacts/` and configure their
+paths in `data_generation.env`. Supported tasks: `peg`, `stackcube`, `cupcake`.
+
 ```bash
 conda activate omnireset_release
+cp configs/launch/data_generation.env.example configs/launch/data_generation.env
 cp configs/launch/sim2sim.env.example configs/launch/sim2sim.env
-bash experiments/sim2sim/run.sh configs/launch/sim2sim.env
-bash experiments/sim2sim/run_eval.sh configs/launch/sim2sim.env
+# Edit the configurations, then generate data.
+bash scripts/generate_data.sh sim2sim configs/launch/data_generation.env peg
 ```
+
+Output: `data/sim2sim/<task>/` (MuJoCo target, IsaacSim source).
 
 ### Sim-to-real
 
+Use 10 user-collected real-robot rollouts for each task (Peg, StackCube, and
+CupCake). Set `REAL_ROOT` in the data-generation configuration.
+
 ```bash
 conda activate omnireset_release
+bash scripts/generate_data.sh sim2real configs/launch/data_generation.env peg
+bash scripts/generate_data.sh sim2real configs/launch/data_generation.env peg prepare-real
 cp configs/launch/sim2real.env.example configs/launch/sim2real.env
-bash experiments/sim2real/run.sh configs/launch/sim2real.env
 ```
 
-This runs selection and co-training. Evaluation requires the physical robot setup.
+Generated data are saved under `data/sim2real/<task>/`. Set the source-policy
+checkpoint, simulation datasets, and real-rollout paths in `sim2real.env`.
 
-### Baselines
+> Matching Franka experts and reset/panel assets are not yet publicly released.
+> CupCake vision data collection is not yet supported.
 
-Set `METHOD` and the required inputs in the corresponding configuration.
+## Data Selection
+
+```bash
+# Single-simulator (cupid environment)
+conda activate cupid
+bash experiments/single_sim/run.sh configs/launch/single_sim.env select
+
+# Sim-to-sim (omnireset_release environment)
+conda activate omnireset_release
+bash experiments/sim2sim/run.sh configs/launch/sim2sim.env select
+
+# Sim-to-real (omnireset_release environment)
+bash experiments/sim2real/run.sh configs/launch/sim2real.env select
+```
+
+## Training
 
 ```bash
 # Single-simulator
-cp configs/launch/diffusion_baseline.env.example configs/launch/baseline.env
-bash experiments/single_sim/run_baseline.sh configs/launch/baseline.env
+conda activate cupid
+bash experiments/single_sim/run.sh configs/launch/single_sim.env train
 
-# Cross-domain
-bash experiments/sim2sim/run_baseline.sh configs/launch/sim2sim.env
-bash experiments/sim2real/run_baseline.sh configs/launch/sim2real.env
+# Sim-to-sim
+conda activate omnireset_release
+bash experiments/sim2sim/run.sh configs/launch/sim2sim.env train
+
+# Sim-to-real
+bash experiments/sim2real/run.sh configs/launch/sim2real.env train
+```
+
+## Evaluation
+
+```bash
+# Single-simulator
+conda activate cupid
+bash experiments/single_sim/run_eval.sh configs/launch/single_sim.env
+
+# Sim-to-sim
+conda activate omnireset_release
+bash experiments/sim2sim/run_eval.sh configs/launch/sim2sim.env
 ```

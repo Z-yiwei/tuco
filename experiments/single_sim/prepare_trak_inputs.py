@@ -9,7 +9,6 @@ from pathlib import Path
 
 import hydra
 import numpy as np
-import torch
 import yaml
 
 from diffusion_policy.common.trak_util import get_policy_from_checkpoint
@@ -93,4 +92,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

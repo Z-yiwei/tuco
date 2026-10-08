@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 export PYTHONNOUSERSITE=1
+export PYTHONUNBUFFERED=1
 set -Eeuo pipefail
 
 ROOT="$(cd "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
-CONFIG="${1:?usage: bash experiments/single_sim/run.sh CONFIG.env}"
+CONFIG="${1:?usage: bash experiments/single_sim/run.sh CONFIG.env [select|train|all]}"
+STAGE="${2:-all}"
+case "${STAGE}" in
+  all|select|train) ;;
+  *) printf 'stage must be all, select, or train\n' >&2; exit 2 ;;
+esac
 [[ -f "${CONFIG}" ]] || { printf 'missing config: %s\n' "${CONFIG}" >&2; exit 1; }
 CONFIG="$(readlink -f -- "${CONFIG}")"
 set -a
@@ -24,7 +30,7 @@ if [[ -z "${DATA_ROOT:-}" ]]; then
   : "${PREP_ROOT:?set PREP_ROOT or DATA_ROOT in ${CONFIG}}"
   DATA_ROOT="${PREP_ROOT}/inputs_${SPLIT}"
 fi
-if [[ ! -f "${DATA_ROOT}/manifest.json" ]]; then
+if [[ "${STAGE}" != train && ! -f "${DATA_ROOT}/manifest.json" ]]; then
   : "${PREP_ROOT:?DATA_ROOT is not prepared; set PREP_ROOT in ${CONFIG}}"
   bash "${ROOT}/experiments/single_sim/prepare.sh" "${CONFIG}"
 fi
@@ -72,46 +78,57 @@ for path in "${PAIRWISE}" "${TARGET_ENDS}" "${CANDIDATE_ENDS}" \
   "${RETURNS}" "${CANDIDATE_IDS}"; do
   [[ -f "${path}" ]] || { printf 'missing input: %s\n' "${path}" >&2; exit 1; }
 done
-[[ ! -e "${RUN_DIR}" ]] || { printf 'refusing to overwrite %s\n' "${RUN_DIR}" >&2; exit 2; }
+if [[ "${STAGE}" != select && -e "${RUN_DIR}" ]]; then
+  printf 'refusing to overwrite %s\n' "${RUN_DIR}" >&2; exit 2
+fi
 
 mkdir -p "${OUTPUT_ROOT}" "${CURATION_DIR}"
 INFLUENCE="${OUTPUT_ROOT}/influence_${SPLIT}.npz"
 SELECTION_DIR="${OUTPUT_ROOT}/tuco_${SPLIT}_full"
 RANKING="${CURATION_DIR}/${RANKING_FILE}"
 
-if [[ ! -f "${INFLUENCE}" ]]; then
-  "${PY}" "${ROOT}/experiments/single_sim/build_influence.py" \
-    --pairwise "${PAIRWISE}" \
-    --pairwise-layout "${PAIRWISE_LAYOUT:-candidate_by_target}" \
-    --target-episode-ends "${TARGET_ENDS}" \
-    --candidate-episode-ends "${CANDIDATE_ENDS}" \
-    --returns "${RETURNS}" \
-    --candidate-ids "${CANDIDATE_IDS}" \
-    --output "${INFLUENCE}"
-fi
+if [[ "${STAGE}" != train ]]; then
+  if [[ ! -f "${INFLUENCE}" ]]; then
+    "${PY}" "${ROOT}/experiments/single_sim/build_influence.py" \
+      --pairwise "${PAIRWISE}" \
+      --pairwise-layout "${PAIRWISE_LAYOUT:-candidate_by_target}" \
+      --target-episode-ends "${TARGET_ENDS}" \
+      --candidate-episode-ends "${CANDIDATE_ENDS}" \
+      --returns "${RETURNS}" \
+      --candidate-ids "${CANDIDATE_IDS}" \
+      --output "${INFLUENCE}"
+  fi
 
-NUM_CANDIDATES="${NUM_CANDIDATES:-$("${PY}" -c 'import numpy as np,sys; print(len(np.load(sys.argv[1])))' "${CANDIDATE_ENDS}")}"
-if [[ ! -f "${SELECTION_DIR}/selected_ids.json" ]]; then
-  [[ ! -e "${SELECTION_DIR}" ]] || {
-    printf 'incomplete selection directory already exists: %s\n' "${SELECTION_DIR}" >&2
-    exit 2
-  }
-  "${PY}" -m tuco.cli.select \
-    --input "${INFLUENCE}" \
-    --budget "${NUM_CANDIDATES}" \
-    --output-dir "${SELECTION_DIR}"
-fi
+  NUM_CANDIDATES="${NUM_CANDIDATES:-$("${PY}" -c 'import numpy as np,sys; print(len(np.load(sys.argv[1])))' "${CANDIDATE_ENDS}")}"
+  if [[ ! -f "${SELECTION_DIR}/selected_ids.json" ]]; then
+    [[ ! -e "${SELECTION_DIR}" ]] || {
+      printf 'incomplete selection directory already exists: %s\n' "${SELECTION_DIR}" >&2
+      exit 2
+    }
+    "${PY}" -m tuco.cli.select \
+      --input "${INFLUENCE}" \
+      --budget "${NUM_CANDIDATES}" \
+      --output-dir "${SELECTION_DIR}"
+  fi
 
-if [[ ! -f "${RANKING}" ]]; then
-  "${PY}" "${ROOT}/experiments/single_sim/write_cupid_ranking.py" \
-    --selection-dir "${SELECTION_DIR}" \
-    --split "${SPLIT}" \
-    --seed "${SEED}" \
-    --output "${RANKING}"
+  if [[ ! -f "${RANKING}" ]]; then
+    "${PY}" "${ROOT}/experiments/single_sim/write_cupid_ranking.py" \
+      --selection-dir "${SELECTION_DIR}" \
+      --split "${SPLIT}" \
+      --seed "${SEED}" \
+      --output "${RANKING}"
+  fi
+
 fi
+if [[ "${STAGE}" == select ]]; then
+  printf 'ranking: %s\n' "${RANKING}"
+  exit 0
+fi
+[[ -f "${RANKING}" ]] || { printf 'run selection first: %s\n' "${RANKING}" >&2; exit 1; }
 
 cd "${CUPID_ROOT}"
 train_overrides=(
+  "training.device=${DEVICE:-cuda:0}"
   "training.num_epochs=${NUM_EPOCHS}"
   "training.checkpoint_every=${CHECKPOINT_EVERY}"
   "training.rollout_every=${CHECKPOINT_EVERY}"
@@ -120,7 +137,7 @@ train_overrides=(
   task.env_runner.n_test_vis=0 task.env_runner.n_train_vis=0
 )
 [[ "${MAX_TRAIN_STEPS}" == 0 ]] || train_overrides+=("training.max_train_steps=${MAX_TRAIN_STEPS}")
-[[ -z "${DATASET_PATH:-}" ]] || train_overrides+=("task.dataset.dataset_path=${DATASET_PATH}")
+[[ -z "${DATASET_PATH:-}" ]] || train_overrides+=("task.dataset.dataset_path=${DATASET_PATH}" "task.dataset_path=${DATASET_PATH}" "task.env_runner.dataset_path=${DATASET_PATH}")
 "${PY}" train.py \
   --config-dir="configs/low_dim/${TASK_MH}/diffusion_policy_cnn" \
   --config-name=config.yaml \

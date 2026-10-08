@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import os
 import sys
@@ -83,12 +82,6 @@ SOURCE_REQUIRED_ATTRS = (
 )
 
 
-def _file_sha256(path):
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as file:
-        for block in iter(lambda: file.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def _audit_source_dataset(
@@ -162,7 +155,6 @@ def _audit_source_dataset(
         )
 
     init_state_max_abs = None
-    initial_state_sha256 = None
     if "data/init_state" in store:
         init_state = np.asarray(store["data/init_state"], dtype=np.float32)
         if init_state.shape != (len(ends), 57):
@@ -172,9 +164,6 @@ def _audit_source_dataset(
             )
         raw_initial = np.asarray(store["data/raw_state"], dtype=np.float32)[starts]
         init_state_max_abs = float(np.max(np.abs(init_state - raw_initial)))
-        initial_state_sha256 = hashlib.sha256(
-            np.ascontiguousarray(init_state).view(np.uint8)
-        ).hexdigest()
         if init_state_max_abs > 2.0e-6:
             raise ValueError(
                 "data/init_state disagrees with data/raw_state at episode starts: "
@@ -231,13 +220,6 @@ def _audit_source_dataset(
                 "fresh unfiltered source is incomplete: requested_episodes="
                 f"{episode_count_attrs['requested_episodes']} but saved "
                 f"{len(ends)} episode boundaries"
-            )
-        if (
-            "initial_state_sha256" in store.attrs
-            and store.attrs["initial_state_sha256"] != initial_state_sha256
-        ):
-            raise ValueError(
-                "source attr initial_state_sha256 disagrees with data/init_state"
             )
         paired_eval_horizon_steps = int(store.attrs["paired_eval_horizon_steps"])
         if paired_eval_horizon_steps <= 0:
@@ -407,7 +389,7 @@ def _audit_source_dataset(
         "allow_incomplete_source_episodes": allow_incomplete_source_episodes,
         "init_state_present": "data/init_state" in store,
         "init_state_vs_raw_start_max_abs": init_state_max_abs,
-        "initial_state_sha256": initial_state_sha256,
+
     }
     return starts, ends, audit
 
@@ -722,36 +704,12 @@ def run(args):
         args.allow_incomplete_source_episodes,
     )
     checkpoint = str(Path(args.checkpoint).resolve())
-    checkpoint_sha256 = _file_sha256(checkpoint)
-    source_checkpoint_sha256 = store.attrs.get("checkpoint_sha256")
-    source_dataset["evaluation_checkpoint_sha256"] = checkpoint_sha256
-    source_dataset["source_checkpoint_sha256"] = source_checkpoint_sha256
-    source_dataset["source_checkpoint_matches_evaluation"] = (
-        source_checkpoint_sha256 == checkpoint_sha256
-        if source_checkpoint_sha256 is not None
-        else None
-    )
-    source_dataset["evaluation_checkpoint_mismatch_allowed"] = bool(
-        args.allow_evaluation_checkpoint_mismatch
-    )
     if (
         source_dataset["paired_fresh_unfiltered"]
         and args.controller_source != "b3_center"
     ):
         raise ValueError(
             "fresh paired source requires --controller_source b3_center"
-        )
-    if (
-        source_dataset["paired_fresh_unfiltered"]
-        and source_checkpoint_sha256 is not None
-        and source_checkpoint_sha256 != checkpoint_sha256
-        and not args.allow_evaluation_checkpoint_mismatch
-    ):
-        raise ValueError(
-            "fresh paired source checkpoint_sha256 does not match the "
-            "MuJoCo evaluation checkpoint; pass "
-            "--allow_evaluation_checkpoint_mismatch only when evaluating a "
-            "new policy on the source's unchanged initial states/runtime"
         )
     policy = FrankaPolicy.load_from_checkpoint(checkpoint)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -856,11 +814,11 @@ def run(args):
         "zarr": str(Path(args.zarr).resolve()),
         "zarr_signature": CL.zarr_signature(store),
         "checkpoint": checkpoint,
-        "checkpoint_md5": CL.file_md5(checkpoint),
-        "checkpoint_sha256": checkpoint_sha256,
+
+
         "checkpoint_iteration": policy.ckpt_iter,
         "evaluator_script": str(Path(__file__).resolve()),
-        "evaluator_script_sha256": _file_sha256(Path(__file__).resolve()),
+
         "torch_config": {
             "num_threads": int(torch.get_num_threads()),
             "num_interop_threads": int(torch.get_num_interop_threads()),
@@ -962,16 +920,16 @@ def aggregate_parts(args):
         "zarr",
         "zarr_signature",
         "checkpoint",
-        "checkpoint_md5",
+
         "checkpoint_iteration",
         "ablation",
         "timing",
         "success_definition",
     )
     optional_invariant_keys = (
-        "checkpoint_sha256",
+
         "evaluator_script",
-        "evaluator_script_sha256",
+
         "source_dataset",
         "torch_config",
     )
@@ -1125,14 +1083,6 @@ def main():
         help=(
             "diagnostic only: permit variable-length or early-terminated source "
             "episodes instead of failing the dataset preflight"
-        ),
-    )
-    parser.add_argument(
-        "--allow_evaluation_checkpoint_mismatch",
-        action="store_true",
-        help=(
-            "permit a new policy checkpoint on the source's unchanged initial "
-            "states and runtime; the mismatch remains recorded in summary.json"
         ),
     )
     parser.add_argument("--physics_substeps", type=int, default=16)

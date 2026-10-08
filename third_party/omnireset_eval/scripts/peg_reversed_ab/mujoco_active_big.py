@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import collections
 import glob
-import hashlib
 import json
 import multiprocessing as mp
 import os
@@ -52,14 +51,6 @@ KD = 2.0 * np.sqrt(KP) * CL.STAGE1_ZETA
 TARGET_POS = np.array([0.0, 0.0, CL.ASSEMBLED_Z])
 _WORKER_TEACHER = None
 _WORKER_STUDENT = None
-
-
-def sha256(path: str) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for block in iter(lambda: f.read(1024 * 1024), b""):
-            h.update(block)
-    return h.hexdigest()
 
 
 def snapshot_files(pattern: str) -> list[str]:
@@ -238,7 +229,7 @@ def collect(args) -> None:
         "simulator": "MuJoCo", "data_role": "A fixed training set",
         "num_demos": args.num_demos, "episode_steps": CL.EP_LEN,
         "checkpoint": os.path.abspath(args.checkpoint),
-        "checkpoint_sha256": sha256(args.checkpoint), "profile": PROFILE,
+        "profile": PROFILE,
         "success": "position<0.01 and abs(roll)+abs(pitch)<0.1; yaw ignored",
         "candidate_slice": [args.candidate_start, args.candidate_stop],
     })
@@ -380,7 +371,6 @@ def evaluate(args) -> None:
                 "success_pos_threshold": 0.01,
                 "success_ori_threshold": 0.1,
                 "checkpoint": os.path.abspath(checkpoint),
-                "checkpoint_sha256": sha256(checkpoint),
                 "profile": PROFILE,
                 "eval_slice": [args.eval_start, args.eval_stop],
             })

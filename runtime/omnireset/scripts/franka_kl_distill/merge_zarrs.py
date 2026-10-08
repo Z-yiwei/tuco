@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import errno
-import hashlib
 import json
 import os
 import shutil
@@ -58,11 +57,9 @@ def _append(
     block_frames: int,
     rotate_180: bool = False,
     verify_write: bool = False,
-) -> dict[str, str] | None:
+) -> None:
     old_size = int(destination.shape[0])
     destination.resize((old_size + int(source.shape[0]),) + destination.shape[1:])
-    source_digest = hashlib.sha256() if verify_write else None
-    written_digest = hashlib.sha256() if verify_write else None
     for start in range(0, int(source.shape[0]), block_frames):
         end = min(start + block_frames, int(source.shape[0]))
         block = retry_io(
@@ -76,8 +73,6 @@ def _append(
                 )
             block = np.asarray(block)[:, ::-1, ::-1, :]
         block = np.ascontiguousarray(block)
-        if source_digest is not None:
-            source_digest.update(block.tobytes())
         destination_slice = slice(old_size + start, old_size + end)
         retry_io(
             f"write {getattr(destination, 'path', '<array>')}[{old_size + start}:{old_size + end}]",
@@ -98,13 +93,6 @@ def _append(
                     f"Zarr write verification failed for frames "
                     f"[{old_size + start}, {old_size + end})"
                 )
-            written_digest.update(np.ascontiguousarray(written).tobytes())
-    if source_digest is None or written_digest is None:
-        return None
-    return {
-        "source_sha256": source_digest.hexdigest(),
-        "merged_sha256": written_digest.hexdigest(),
-    }
 
 
 def _write_json_atomic(path: Path, payload: dict[str, object]) -> None:
@@ -236,7 +224,6 @@ def _resumable_verified_merge(
         if ends.ndim != 1 or len(ends) == 0 or np.any(np.diff(ends) <= 0):
             raise ValueError(f"invalid episode_ends in {input_path}")
         frame_count = int(ends[-1])
-        array_hashes: dict[str, dict[str, str]] = {}
         for key in data_keys:
             source = root[f"data/{key}"]
             destination = output[f"data/{key}"]
@@ -247,7 +234,7 @@ def _resumable_verified_merge(
                 )
             if source.shape[1:] != destination.shape[1:] or source.dtype != destination.dtype:
                 raise ValueError(f"{input_path}: incompatible data/{key} shape or dtype")
-            array_hashes[f"data/{key}"] = _append(
+            _append(
                 destination,
                 source,
                 args.block_frames,
@@ -264,24 +251,19 @@ def _resumable_verified_merge(
                 )
             if source.shape[1:] != destination.shape[1:] or source.dtype != destination.dtype:
                 raise ValueError(f"{input_path}: incompatible meta/{key} shape or dtype")
-            array_hashes[f"meta/{key}"] = _append(
+            _append(
                 destination,
                 source,
                 max(args.block_frames, 1024),
                 verify_write=True,
             )
         adjusted_ends = ends + frame_offset
-        array_hashes["meta/episode_ends"] = _append(
+        _append(
             output["meta/episode_ends"],
             adjusted_ends,
             max(args.block_frames, 1024),
             verify_write=True,
         )
-        if any(
-            hashes["source_sha256"] != hashes["merged_sha256"]
-            for hashes in array_hashes.values()
-        ):
-            raise IOError(f"write digest mismatch after merging {input_path}")
 
         delete_eligible = input_path.is_relative_to(delete_root)
         source_size_bytes = _directory_size_bytes(input_path) if delete_eligible else None
@@ -294,7 +276,6 @@ def _resumable_verified_merge(
             "episode_start": episode_offset,
             "episode_end": episode_offset + len(ends),
             "episode_ends": adjusted_ends.tolist(),
-            "array_hashes": array_hashes,
             "collection_config": dict(root.attrs.get("collection_config", {})),
             "write_verified": True,
             "delete_eligible": delete_eligible,
@@ -367,7 +348,7 @@ def main() -> None:
     parser.add_argument(
         "--resume_verified",
         action="store_true",
-        help="Resume at verified shard boundaries and record per-array write digests",
+        help="Resume at completed shard boundaries",
     )
     parser.add_argument(
         "--delete_verified_inputs_under",

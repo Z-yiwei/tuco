@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import os
 import sys
@@ -195,15 +194,6 @@ def configure_control_profile(name):
     }
 
 
-def file_md5(path, block_size=1 << 20):
-    digest = hashlib.md5()
-    with open(path, "rb") as file:
-        while True:
-            chunk = file.read(block_size)
-            if not chunk:
-                break
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def quat_angle(q1, q2):
@@ -678,7 +668,7 @@ def write_outputs(args, results, obs_validation, reset_total, control_profile, p
             "strict stack pose, receptive contact, low object velocity, and no robot-object contact"
         ),
         "checkpoint": args.checkpoint,
-        "checkpoint_md5": file_md5(args.checkpoint),
+
         "checkpoint_iteration": int(policy_metadata["checkpoint_iteration"]),
         "policy_type": policy_metadata["type"],
         "policy_metadata": policy_metadata,
@@ -807,7 +797,7 @@ def aggregate_parts(args):
         for key in (
             "definition",
             "checkpoint",
-            "checkpoint_md5",
+
             "checkpoint_iteration",
             "profile",
             "control_profile",

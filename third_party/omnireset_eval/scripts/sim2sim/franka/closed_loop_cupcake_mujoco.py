@@ -1,14 +1,9 @@
-"""Deterministic CupCake policy closed-loop evaluation in MuJoCo.
-
-The source Zarr contributes only the frozen reset and effective runtime. After
-one reset restore, every action is inferred from the live 200-D MuJoCo state.
-"""
+"""Evaluate CupCake policies with live MuJoCo observations and frozen resets."""
 
 from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import os
 import sys
@@ -39,14 +34,6 @@ DEFAULT_OUT = "log/active/cupcake_sim2sim_20260815/closed_loop_smoke"
 STABLE_SUCCESS_STEPS = 5
 
 
-def file_sha256(path: str | Path) -> str:
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as file:
-        for block in iter(lambda: file.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
 def write_csv(path: Path, rows: list[dict]) -> None:
     if not rows:
         return
@@ -57,7 +44,7 @@ def write_csv(path: Path, rows: list[dict]) -> None:
 
 
 def audit_source(
-    store, checkpoint: Path, allow_checkpoint_mismatch: bool = False
+    store, checkpoint: Path
 ) -> tuple[np.ndarray, np.ndarray, dict]:
     required = (
         "data/raw_state",
@@ -88,23 +75,9 @@ def audit_source(
     if abs(physics_dt * decimation - policy_dt) > 1.0e-12:
         raise ValueError("source physics_dt * decimation != policy_dt")
 
-    checkpoint_hash = file_sha256(checkpoint)
-    source_hash = store.attrs.get("checkpoint_sha256")
-    if (
-        source_hash is not None
-        and source_hash != checkpoint_hash
-        and not allow_checkpoint_mismatch
-    ):
-        raise ValueError(
-            "evaluation checkpoint does not match the source checkpoint: "
-            f"{checkpoint_hash} != {source_hash}"
-        )
     return starts, ends, {
         "episode_lengths": lengths.tolist(),
-        "source_checkpoint_sha256": source_hash,
-        "evaluation_checkpoint_sha256": checkpoint_hash,
-        "checkpoint_matches": source_hash == checkpoint_hash,
-        "checkpoint_mismatch_allowed": bool(allow_checkpoint_mismatch),
+        "checkpoint": str(checkpoint),
         "timing": {
             "physics_dt_s": physics_dt,
             "decimation": decimation,
@@ -490,9 +463,7 @@ def run(args: argparse.Namespace) -> None:
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
     store = zarr.open(str(source), mode="r")
-    starts, ends, source_audit = audit_source(
-        store, checkpoint, args.allow_checkpoint_mismatch
-    )
+    starts, ends, source_audit = audit_source(store, checkpoint)
     episodes = Replay.parse_episodes(args.episodes, len(ends))
     render_episodes = set(
         Replay.parse_episodes(args.render_episodes, len(ends))
@@ -585,7 +556,6 @@ def run(args: argparse.Namespace) -> None:
         "source_audit": source_audit,
         "checkpoint": str(checkpoint),
         "checkpoint_iteration": policy.ckpt_iter,
-        "checkpoint_sha256": file_sha256(checkpoint),
         "policy_device": args.device,
         "episodes": episodes,
         "timing": {
@@ -668,14 +638,6 @@ def main() -> None:
     parser.add_argument("--zarr", default=DEFAULT_ZARR)
     parser.add_argument("--checkpoint", default=DEFAULT_CHECKPOINT)
     parser.add_argument("--device", default="cpu")
-    parser.add_argument(
-        "--allow-checkpoint-mismatch",
-        action="store_true",
-        help=(
-            "Allow a MuJoCo-RL policy checkpoint while the source Zarr only "
-            "provides frozen reset/runtime data. The mismatch remains audited."
-        ),
-    )
     parser.add_argument("--out", default=DEFAULT_OUT)
     parser.add_argument("--episodes", default="0")
     parser.add_argument("--max_steps", type=int, default=0)

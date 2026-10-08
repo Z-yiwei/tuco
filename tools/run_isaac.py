@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """Execute a collector with vendored project imports and isolated artifact paths."""
 import argparse
-import os
 from pathlib import Path
-import runpy
 import subprocess
 import sys
 from runtime_env import ROOT,RUNTIME,environment

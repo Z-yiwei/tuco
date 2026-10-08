@@ -451,6 +451,8 @@ class check_reset_state_success(ManagerTermBase):
         receptive_asset_cfg: SceneEntityCfg | None = None,
         assembly_success_prob: float | None = None,
         assembly_threshold_scale: float = 1.0,
+        side_lying_asset_cfg: SceneEntityCfg | None = None,
+        side_lying_local_z_world_z_range: tuple[float, float] | None = None,
     ) -> torch.Tensor:
 
         # Check time out
@@ -545,6 +547,12 @@ class check_reset_state_success(ManagerTermBase):
             reset_success = reset_success & assembly_match
             self._pending_reflip |= reset_success
 
+        if side_lying_asset_cfg is not None:
+            asset = env.scene[side_lying_asset_cfg.name]
+            local_z = torch.tensor((0.0, 0.0, 1.0), device=env.device).expand(env.num_envs, -1)
+            world_z = math_utils.quat_apply(asset.data.root_quat_w, local_z)[:, 2]
+            lower, upper = side_lying_local_z_world_z_range
+            reset_success &= (world_z >= lower) & (world_z <= upper)
         return reset_success
 
 

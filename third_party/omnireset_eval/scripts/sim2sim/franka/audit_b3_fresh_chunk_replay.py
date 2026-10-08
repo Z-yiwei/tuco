@@ -16,7 +16,6 @@ settings.  It does not modify the source zarr or any training dataset.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
@@ -53,12 +52,6 @@ FINGER_VELOCITY_LIMITS = np.array([0.04, 0.04], dtype=np.float64)
 EFFORT_SCALE = np.ones(7, dtype=np.float64)
 
 
-def file_sha256(path: str | Path) -> str:
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def source_endpoint(raw: np.ndarray) -> dict:
@@ -614,18 +607,18 @@ def run(args) -> None:
         "source": {
             "path": source_path,
             "zarr_signature": CL.zarr_signature(store),
-            "checkpoint_sha256": store.attrs.get("checkpoint_sha256"),
-            "initial_state_sha256": store.attrs.get("initial_state_sha256"),
-            "collector_script_sha256": store.attrs.get("collector_script_sha256"),
+
+
+
             "source_audit": source_audit,
         },
         "harness": {
             "script": str(Path(__file__).resolve()),
-            "script_sha256": file_sha256(__file__),
+
             "formal_evaluator_script": str(Path(B3.__file__).resolve()),
-            "formal_evaluator_script_sha256": file_sha256(B3.__file__),
+
             "action_executor_script": str(Path(Replay.__file__).resolve()),
-            "action_executor_script_sha256": file_sha256(Replay.__file__),
+
         },
         "protocol": {
             "episode_ids": episode_ids,

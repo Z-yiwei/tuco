@@ -7,12 +7,12 @@ KIND="${1:?usage: bash scripts/setup_environment.sh cupid|omnireset}"
 
 case "${KIND}" in
   cupid)
-    ENV_NAME=cupid
+    ENV_NAME="${ENV_NAME:-cupid}"
     ENV_FILE="${ROOT}/environments/cupid.yaml"
     RUNTIME_FILE="${ROOT}/environments/cupid-runtime.txt"
     ;;
   omnireset)
-    ENV_NAME=omnireset_release
+    ENV_NAME="${ENV_NAME:-omnireset_release}"
     ENV_FILE="${ROOT}/environments/omnireset.yaml"
     RUNTIME_FILE="${ROOT}/environments/omnireset-runtime.txt"
     ;;
@@ -21,12 +21,12 @@ esac
 
 command -v conda >/dev/null || { printf 'conda is required\n' >&2; exit 1; }
 if ! conda env list | awk '{print $1}' | grep -Fxq "${ENV_NAME}"; then
-  conda env create -f "${ENV_FILE}"
+  conda env create -n "${ENV_NAME}" -f "${ENV_FILE}"
 fi
 
 run=(conda run --no-capture-output -n "${ENV_NAME}")
 if [[ "${KIND}" == omnireset ]]; then
-  # Install the observed dependency closure without upgrading the numerical stack.
+  # Keep the numerical stack pinned across simulator adapters.
   "${run[@]}" python -m pip install --no-deps \
     --extra-index-url https://download.pytorch.org/whl/cu128 \
     -r "${ROOT}/environments/omnireset.requirements.txt"
@@ -47,9 +47,11 @@ if [[ -n "${torch_cuda}" && -x "${cuda_home}/bin/nvcc" ]] && \
     "${run[@]}" python -m pip install --no-deps --no-build-isolation \
       "${ROOT}/third_party/cupid/third_party/trak/fast_jl"
 else
-  printf 'warning: matching CUDA toolkit %s is unavailable; CUDA TRAK attribution requires fast_jl before use\n' \
+  printf 'matching CUDA toolkit %s unavailable; TRAK will use its PyTorch projector\n' \
     "${torch_cuda:-none}" >&2
 fi
+
+"${run[@]}" python -m pip check
 
 "${run[@]}" python - <<'PY'
 import torch

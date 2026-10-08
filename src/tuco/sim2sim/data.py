@@ -1,10 +1,4 @@
-"""Zarr data access, normalization, episode bookkeeping, and windowed sampling.
-
-Data contract (see franka_state_models.md / expert_mujoco_r1.zarr):
-    data/state   (T, obs_dim)   data/action (T, act_dim)
-    meta/episode_ends (n_ep,)    cumulative end indices
-Optional: data/success (T,) or (n_ep,) for held-out target sets.
-"""
+"""Zarr data access, normalization, episode bookkeeping, and windowed sampling."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -49,42 +43,6 @@ def episode_frame_indices(ends: np.ndarray) -> List[np.ndarray]:
     return [np.arange(s, e, dtype=np.int64) for s, e in zip(starts, ends)]
 
 
-def previous_states(state: np.ndarray, ends: np.ndarray) -> np.ndarray:
-    """Return the preceding state within each episode (first frame = current).
-
-    The returned array has one row per current state.  It is useful when a
-    mixed dataset needs to make the otherwise implicit observation immediately
-    before an episode/chunk boundary explicit.
-    """
-    state = np.asarray(state)
-    prev = np.empty_like(state)
-    starts, ends_ = episode_bounds(ends)
-    for start, end in zip(starts, ends_):
-        if end <= start:
-            continue
-        prev[start] = state[start]
-        prev[start + 1:end] = state[start:end - 1]
-    return prev
-
-
-def take_first_demos(arrays: Sequence[np.ndarray], ends: np.ndarray, n: int
-                     ) -> Tuple[List[np.ndarray], np.ndarray]:
-    """Slice the first `n` episodes out of (arrays, ends)."""
-    if n is None or n >= len(ends):
-        return list(arrays), ends
-    cut = int(ends[n - 1])
-    return [a[:cut] for a in arrays], ends[:n].astype(np.int64)
-
-
-def take_demo_range(arrays: Sequence[np.ndarray], ends: np.ndarray, lo: int, hi: int
-                    ) -> Tuple[List[np.ndarray], np.ndarray]:
-    """Slice episodes [lo, hi) and re-base episode_ends to start at 0."""
-    starts, ends_ = episode_bounds(ends)
-    f0, f1 = int(starts[lo]), int(ends_[hi - 1])
-    new_ends = (ends_[lo:hi] - f0).astype(np.int64)
-    return [a[f0:f1] for a in arrays], new_ends
-
-
 # --------------------------------------------------------------------------- #
 # Normalization (matches train_mlp_bc)
 # --------------------------------------------------------------------------- #
@@ -97,9 +55,10 @@ class NormStats:
 
     @classmethod
     def fit(cls, state: np.ndarray, action: np.ndarray) -> "NormStats":
-        s_mean = state.mean(axis=0)
-        # torch.std uses Bessel's correction by default in the reference trainer.
-        s_std = state.std(axis=0, ddof=1) + 1e-6
+        # Match the reference trainer's reduction precision and Bessel correction.
+        state_tensor = torch.as_tensor(state, dtype=torch.float32)
+        s_mean = state_tensor.mean(dim=0).numpy()
+        s_std = (state_tensor.std(dim=0) + 1e-6).numpy()
         a_max, a_min = action.max(axis=0), action.min(axis=0)
         a_center = (a_max + a_min) / 2.0
         a_scale = (a_max - a_min) / 2.0 + 1e-6

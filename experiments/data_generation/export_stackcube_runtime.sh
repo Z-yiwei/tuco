@@ -31,6 +31,7 @@ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
     --episode_steps 160 --preserve_controller_events \
     --source_policy_type rsl_rl --seed 42 --device cuda:0 --headless \
     env.scene.insertive_object=cube env.scene.receptive_object=cube \
+    'env.scene.table.init_state.pos=[0.4,0.0,-0.881]' \
     env.scene.robot.actuators.panda_hand.stiffness=1000.0 \
     env.scene.robot.actuators.panda_hand.damping=14.0 \
     env.scene.robot.actuators.panda_hand.effort_limit_sim=60.0

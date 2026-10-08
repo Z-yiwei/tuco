@@ -499,6 +499,15 @@ gym.register(
     },
 )
 
+gym.register(
+    id="OmniReset-FrankaPanda-CupCakeSideLyingFront3cm-v0",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"{__name__}.reset_states_cfg:FrankaCupCakeSideLyingFront3cmResetStatesCfg"
+    },
+)
+
 # Register SysID env (CMA-ES closed-loop replay; see sysid_cfg.py)
 gym.register(
     id="OmniReset-FrankaFr3Gripper-Sysid-v0",

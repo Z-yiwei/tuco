@@ -86,6 +86,10 @@ run_training() {
       : "${TRAIN_CACHE:?set TRAIN_CACHE in ${CONFIG}}"
       DATASET_NAME="${DATASET_NAME:-stackcube_${METHOD}}"
       if [[ ! -f "${MATERIALIZED_HDF5}" ]]; then
+        if [[ "${GENERATE_VARIANTS:-1}" == 1 ]]; then
+          SELECTION="${SELECTION}" VARIANTS_ROOT="${VARIANTS_ROOT}" \
+            GPU="${GPU}" bash "${ROOT}/experiments/sim2real/generate_variants.sh"
+        fi
         "${PY}" "${ROOT}/experiments/sim2real/materialize_stackcube.py" \
           --source-zarr "${SOURCE_ZARR}" --source-hdf5 "${SOURCE_HDF5}" \
           --variants-root "${VARIANTS_ROOT}" --selected-ids "${SELECTION}" \

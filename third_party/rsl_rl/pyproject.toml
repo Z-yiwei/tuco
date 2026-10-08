@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rsl-rl-lib"
+version = "3.1.2"
+description = "Vendored UW-Lab RSL-RL implementation used by OmniReset experts."
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+dependencies = [
+    "torch>=2.6.0",
+    "torchvision>=0.5.0",
+    "tensordict>=0.7.0",
+    "numpy>=1.16.4",
+    "GitPython",
+    "onnx",
+]
+
+[tool.setuptools.packages.find]
+include = ["rsl_rl*"]

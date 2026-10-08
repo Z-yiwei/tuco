@@ -1067,8 +1067,8 @@ def run(args: argparse.Namespace) -> None:
         "zarr": str(Path(args.zarr).resolve()),
         "zarr_signature": CL.zarr_signature(store),
         "checkpoint": store.attrs.get("checkpoint"),
-        "checkpoint_sha256": store.attrs.get("checkpoint_sha256"),
-        "reset_state_sha256": store.attrs.get("reset_state_sha256"),
+
+
         "episodes": episodes,
         "mode": args.mode,
         "limit_steps": args.limit_steps,

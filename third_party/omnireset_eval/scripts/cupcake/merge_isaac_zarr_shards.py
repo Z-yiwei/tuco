@@ -17,7 +17,6 @@ CONTRACT_KEYS = (
     "task",
     "reset_type",
     "reset_dataset_dir",
-    "teacher_checkpoint_sha256",
     "expected_obs_dim",
     "expected_act_dim",
     "expected_episode_steps",

@@ -1,9 +1,4 @@
-"""Training loop shared by base training and co-training (train-from-scratch).
-
-Recipe matches co-curation/train_mlp_bc.py and sim2sim_cotrain/co_train_select.py:
-AdamW(betas=(0.95,0.999)) + linear warmup + cosine decay, grad-clip 1.0, EMA
-(power=0.75), MSE/L1 regression on normalized (state, action).
-"""
+"""Training loop shared by base training and co-training (train-from-scratch)."""
 from __future__ import annotations
 
 import math

@@ -3,17 +3,7 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-"""Reset state recording configs for Franka Panda.
-
-Adapted from ur5e_robotiq_2f85/reset_states_cfg.py with Franka-specific:
-  - Robot asset: FRANKA_PANDA_CFG
-  - EE body: panda_hand (instead of robotiq_base_link)
-  - IK joints: panda_joint.* (instead of shoulder.*/elbow.*/wrist.*)
-  - Gripper joints: panda_finger_joint.* (instead of finger_joint/right/left)
-  - No ur5_metal_support — Franka sits directly on ground plane
-  - Relaxed collision check (panda palm overlaps thin peg)
-  - Higher friction + arm stiffness for stable grasps
-"""
+"""Franka Panda reset-state recording configurations."""
 
 from __future__ import annotations
 
@@ -697,6 +687,81 @@ class FrankaObjectPartiallyAssembledEEAnywhereResetStatesCfg(FrankaPandaResetSta
         self.terminations.success.params["receptive_asset_cfg"] = SceneEntityCfg("receptive_object")
         self.terminations.success.params["assembly_success_prob"] = 0.5
         self.terminations.success.params["assembly_threshold_scale"] = 1.5
+
+
+from .cupcake_reset_spec import CUPCAKE_POSE_RANGE, PLATE_POSE_RANGE
+
+
+@configclass
+class FrankaCupCakeSideLyingFront3cmEventCfg(FrankaObjectAnywhereEEAnywhereEventCfg):
+    """CupCake side-lying near the robot, with the plate farther forward."""
+
+    # FixedHome alignment: the robot is reset to its canonical root/joint
+    # state.  The joint targets must be synchronized as well; otherwise the
+    # implicit-PD controller immediately pulls the robot toward stale targets.
+    reset_end_effector_pose = None
+
+    reset_robot_pose = EventTerm(
+        func=task_mdp.reset_root_states_uniform,
+        mode="reset",
+        params={
+            "pose_range": {
+                "x": (0.0, 0.0),
+                "y": (0.0, 0.0),
+                "z": (0.0, 0.0),
+                "roll": (0.0, 0.0),
+                "pitch": (0.0, 0.0),
+                "yaw": (0.0, 0.0),
+            },
+            "velocity_range": {},
+            "asset_cfgs": {"robot": SceneEntityCfg("robot")},
+        },
+    )
+
+    reset_robot_joints_to_home = EventTerm(
+        func=task_mdp.reset_joints_to_default_and_hold,
+        mode="reset",
+        params={
+            "asset_cfg": SceneEntityCfg("robot", joint_names=["panda_joint.*"]),
+        },
+    )
+
+    reset_insertive_object_pose = EventTerm(
+        func=task_mdp.reset_root_states_uniform,
+        mode="reset",
+        params={
+            "pose_range": CUPCAKE_POSE_RANGE,
+            "velocity_range": {},
+            "asset_cfgs": {"insertive_object": SceneEntityCfg("insertive_object")},
+        },
+    )
+
+    reset_receptive_object_pose = EventTerm(
+        func=task_mdp.reset_root_states_uniform,
+        mode="reset",
+        params={
+            "pose_range": PLATE_POSE_RANGE,
+            "velocity_range": {},
+            "asset_cfgs": {"receptive_object": SceneEntityCfg("receptive_object")},
+        },
+    )
+
+
+@configclass
+class FrankaCupCakeSideLyingFront3cmResetStatesCfg(FrankaPandaResetStatesCfg):
+    events: FrankaCupCakeSideLyingFront3cmEventCfg = FrankaCupCakeSideLyingFront3cmEventCfg()
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.terminations.success.params["max_object_pos_deviation"] = np.inf
+        self.terminations.success.params["side_lying_asset_cfg"] = SceneEntityCfg(
+            "insertive_object"
+        )
+        self.terminations.success.params[
+            "side_lying_local_z_world_z_range"
+        ] = (float(np.cos(np.deg2rad(78.0))), float(np.cos(np.deg2rad(70.0))))
+        self.actions.body = None
+        self.episode_length_s = 4.0
 
 
 @configclass

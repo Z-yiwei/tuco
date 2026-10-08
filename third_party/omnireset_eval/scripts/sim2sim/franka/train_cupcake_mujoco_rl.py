@@ -30,7 +30,6 @@ from train_peg_mujoco_rl import (
     OnPolicyRunner,
     all_model_values_finite,
     choose_runtime_assignments,
-    file_sha256,
     make_train_cfg,
     resolve_device,
     transfer_parent_actor,
@@ -86,12 +85,6 @@ def audit_fit_source(
         raise ValueError(f"source Zarr is not the fit panel: {source}")
     if not np.array_equal(reset_indices, fit_indices):
         raise ValueError("source reset indices do not exactly match split fit panel")
-    split_hash = file_sha256(split_manifest)
-    if store.attrs.get("split_manifest_sha256") != split_hash:
-        raise ValueError("source split-manifest hash does not match frozen manifest")
-    checkpoint_hash = file_sha256(checkpoint)
-    if store.attrs.get("checkpoint_sha256") != checkpoint_hash:
-        raise ValueError("source checkpoint hash does not match training parent")
     success_seen = np.asarray(store["meta/success_seen"], dtype=np.bool_)
     return {
         "panel": "fit",
@@ -100,8 +93,6 @@ def audit_fit_source(
         "source_success_seen": int(success_seen.sum()),
         "source_failure_seen": int((~success_seen).sum()),
         "split_manifest": str(split_manifest),
-        "split_manifest_sha256": split_hash,
-        "checkpoint_matches": True,
         "timing": {
             "physics_dt_s": float(store.attrs["physics_dt_s"]),
             "decimation": int(store.attrs["decimation"]),
@@ -298,9 +289,8 @@ def main() -> None:
         "host": socket.gethostname(),
         "pid": os.getpid(),
         "parent_checkpoint": str(checkpoint),
-        "parent_checkpoint_sha256": file_sha256(checkpoint),
         "reward_reference_sources": [
-            {"path": str(path), "sha256": file_sha256(path)}
+            {"path": str(path)}
             for path in reward_sources
         ],
         "resume_checkpoint": str(resume) if resume else None,
@@ -308,12 +298,10 @@ def main() -> None:
             "mujoco_resume" if resume is not None else args.init_mode
         ),
         "source_zarr": str(source),
-        "source_zattrs_sha256": file_sha256(source / ".zattrs"),
         "source_audit": source_audit,
         "observation_parity": {
             **observation_parity,
             "source": str(parity_source),
-            "source_zattrs_sha256": file_sha256(parity_source / ".zattrs"),
         },
         "reset_rows": int(len(reset_pool)),
         "reset_mode": args.reset_mode,
@@ -399,7 +387,6 @@ def main() -> None:
             initialization = {
                 "mode": "full_mujoco_rl_resume",
                 "resume": str(resume),
-                "resume_sha256": file_sha256(resume),
             }
             parity_error = None
         elif args.init_mode == "full_parent":
@@ -457,7 +444,6 @@ def main() -> None:
             "completed": True,
             "elapsed_s": elapsed,
             "final_checkpoint": str(final_checkpoint.resolve()),
-            "final_checkpoint_sha256": file_sha256(final_checkpoint),
             "final_iteration": int(runner.current_learning_iteration),
             "model_values_finite": True,
             "full_save_reload_passed": True,

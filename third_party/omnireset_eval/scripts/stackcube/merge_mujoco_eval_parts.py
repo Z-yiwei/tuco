@@ -34,9 +34,9 @@ def main() -> None:
             row["episode"] = int(runtime_index)
             rows.append(row)
 
-    checkpoint_hashes = {s["checkpoint_sha256"] for s in summaries}
+    checkpoints = {s["checkpoint"] for s in summaries}
     runtime_sources = {s["runtime_source"] for s in summaries}
-    if len(checkpoint_hashes) != 1 or len(runtime_sources) != 1:
+    if len(checkpoints) != 1 or len(runtime_sources) != 1:
         raise ValueError("parts do not share one checkpoint/runtime source")
     rows.sort(key=lambda row: row["episode"])
     expected = list(range(args.expected_episodes))

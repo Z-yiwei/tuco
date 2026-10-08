@@ -1,8 +1,7 @@
 [data]
 target_domain = "real_fr3"
 source_domain = "isaacsim"
-real_rollouts = 9
-real_decisions = 220
+real_rollouts = 10
 physical_states = 1200
 candidate_visual_repeats = 5
 attribution_visual_repeats = 1

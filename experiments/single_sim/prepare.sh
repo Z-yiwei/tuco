@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 export PYTHONNOUSERSITE=1
+export PYTHONUNBUFFERED=1
 set -Eeuo pipefail
 
 ROOT="$(cd "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -51,12 +52,14 @@ INPUT_DIR="${PREP_ROOT}/inputs_${SPLIT}"
 mkdir -p "${PREP_ROOT}"
 cd "${CUPID_ROOT}"
 
-if [[ ! -f "${TRAIN_DIR}/checkpoints/latest.ckpt" ]]; then
+if [[ ! -f "${TRAIN_DIR}/training.complete" ]]; then
+  resume=false
+  [[ ! -f "${TRAIN_DIR}/checkpoints/latest.ckpt" ]] || resume=true
   train_overrides=()
   [[ "${MAX_TRAIN_STEPS}" == 0 ]] || \
     train_overrides+=("training.max_train_steps=${MAX_TRAIN_STEPS}")
   [[ -z "${DATASET_PATH:-}" ]] || \
-    train_overrides+=("task.dataset.dataset_path=${DATASET_PATH}")
+    train_overrides+=("task.dataset.dataset_path=${DATASET_PATH}" "task.dataset_path=${DATASET_PATH}" "task.env_runner.dataset_path=${DATASET_PATH}")
   "${PY}" train.py \
     --config-dir="configs/low_dim/${TASK_MH}/diffusion_policy_cnn" \
     --config-name=config.yaml \
@@ -68,8 +71,9 @@ if [[ ! -f "${TRAIN_DIR}/checkpoints/latest.ckpt" ]]; then
     "+task.dataset.dataset_mask_kwargs.train_ratio=${TRAIN_RATIO}" \
     +task.dataset.dataset_mask_kwargs.uniform_quality=true \
     task.env_runner.n_test_vis=0 task.env_runner.n_train_vis=0 \
-    checkpoint.topk.k=5 training.resume=false logging.mode=disabled \
+    checkpoint.topk.k=5 "training.resume=${resume}" +training.resume_at_next_epoch=true logging.mode=disabled \
     "${train_overrides[@]}"
+  touch "${TRAIN_DIR}/training.complete"
 fi
 
 if [[ ! -f "${EVAL_DIR}/episodes/metadata.yaml" ]]; then

@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -76,14 +75,6 @@ class MLPBCInference:
         action = self.model(normalized) * self.a_scale + self.a_center
         self.previous = current.clone()
         return action
-
-
-def file_sha256(path: str | Path) -> str:
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as stream:
-        for block in iter(lambda: stream.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -385,7 +376,6 @@ def main() -> None:
         "reset_pool_npz": str(reset_pool_path) if reset_pool_path else None,
         "source_success_available": reset_pool_path is None,
         "checkpoint": str(checkpoint),
-        "checkpoint_sha256": file_sha256(checkpoint),
         "checkpoint_iteration": policy.ckpt_iter,
         "policy_type": args.policy_type,
         "episodes": episodes,
@@ -470,7 +460,6 @@ def main() -> None:
                     CupCake.SUCCESS_ORIENTATION_XY_RAD
                 ),
                 "checkpoint": str(checkpoint),
-                "checkpoint_sha256": file_sha256(checkpoint),
                 "eval_contract_id": "mujoco-cupcake-fixedhome-stable-v1",
                 "simulator": "MuJoCo",
                 "metric": "strict_stable_success",

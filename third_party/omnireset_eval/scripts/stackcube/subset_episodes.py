@@ -3,21 +3,11 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
 import numpy as np
 import zarr
-
-
-def sha256_array(value: np.ndarray) -> str:
-    value = np.ascontiguousarray(value)
-    digest = hashlib.sha256()
-    digest.update(value.dtype.str.encode("ascii"))
-    digest.update(np.asarray(value.shape, dtype=np.int64).tobytes())
-    digest.update(value.view(np.uint8))
-    return digest.hexdigest()
 
 
 def main() -> None:
@@ -90,7 +80,6 @@ def main() -> None:
             "subset_seed": int(args.seed),
             "subset_sampling": args.sampling,
             "subset_source_episode_indices_json": json.dumps(selected.tolist()),
-            "subset_source_episode_indices_sha256": sha256_array(selected),
             "episodes": int(args.episodes),
             "frames": int(subset_ends[-1]),
         }

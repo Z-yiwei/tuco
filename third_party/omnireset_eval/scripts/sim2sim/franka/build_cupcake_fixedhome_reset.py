@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import hashlib
 import json
 import os
 import uuid
@@ -31,14 +30,6 @@ CANONICAL_ROOT_POSE = (0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0)
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise RuntimeError(message)
-
-
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def stack_rows(value: Any) -> torch.Tensor:
@@ -222,12 +213,10 @@ def main() -> None:
             ),
             "source": {
                 "path": str(source_path),
-                "sha256": file_sha256(source_path),
                 "count": count,
             },
             "output": {
                 "path": str(output_path),
-                "sha256": file_sha256(output_path),
                 "count": len(indices),
             },
             "selected_source_indices": indices,

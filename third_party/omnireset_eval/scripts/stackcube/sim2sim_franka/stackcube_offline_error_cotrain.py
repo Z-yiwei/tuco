@@ -14,7 +14,6 @@ and the runtime B3 dynamics/material arrays used by IsaacSim.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -112,12 +111,6 @@ def make_controller_profile(
     }
 
 
-def file_sha256(path: str | Path) -> str:
-    digest = hashlib.sha256()
-    with open(path, "rb") as file:
-        for block in iter(lambda: file.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def to_jsonable(value):
@@ -614,7 +607,7 @@ def write_output(args, store, records, corrections, effective):
         "candidate_stride": effective_stride,
         "selector_primary": "terminal cube position L2 in robot-root frame",
         "expert_checkpoint": checkpoint,
-        "expert_checkpoint_sha256": file_sha256(checkpoint),
+
         "replay_policy_inference_calls": 0,
         "replay_state_restore_count": len(records),
         "replay_per_step_state_restore": False,

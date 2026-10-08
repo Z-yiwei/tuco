@@ -26,9 +26,7 @@ sim2real = [
 [project.scripts]
 tuco-select = "tuco.cli.select:main"
 tuco-finalize = "tuco.cli.finalize:main"
-tuco-verify-selection = "tuco.cli.verify_selection:main"
 tuco-select-dp-baseline = "tuco.cli.select_diffusion_baseline:main"
-tuco-verify-curation = "tuco.cli.verify_curated_selection:main"
 tuco-protocol = "tuco.cli.protocol:main"
 
 [tool.setuptools.packages.find]

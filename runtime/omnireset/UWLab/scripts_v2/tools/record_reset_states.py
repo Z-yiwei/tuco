@@ -22,6 +22,7 @@ from isaaclab.app import AppLauncher
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Record reset states for object pairs.")
 parser.add_argument("--num_envs", type=int, default=1, help="Number of environments to simulate.")
+parser.add_argument("--seed", type=int, default=None, help="Seed for reproducible reset sampling.")
 parser.add_argument(
     "--task", type=str, default="OmniReset-UR5eRobotiq2f85-ObjectAnywhereEEAnywhere-v0", help="Name of the task."
 )
@@ -219,8 +220,7 @@ def main(env_cfg, agent_cfg) -> None:
     env_cfg.scene.num_envs = args_cli.num_envs if args_cli.num_envs is not None else env_cfg.scene.num_envs
     env_cfg.sim.device = args_cli.device if args_cli.device is not None else env_cfg.sim.device
 
-    # make sure environment is non-deterministic for diverse pose discovery
-    env_cfg.seed = None
+    env_cfg.seed = args_cli.seed
 
     # Derive pair directory and reset type for output path
     insertive_usd_path = env_cfg.scene.insertive_object.spawn.usd_path

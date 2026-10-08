@@ -77,7 +77,7 @@ def main() -> None:
     sim.add_argument("--task", choices=("peg", "stackcube", "cupcake"), required=True)
     sim.add_argument("--target", type=Path, required=True)
     sim.add_argument("--source", type=Path, required=True)
-    sim.add_argument("--rollouts", type=Path, required=True)
+    sim.add_argument("--rollouts", type=Path)
     sim.add_argument(
         "--allow-subset",
         action="store_true",
@@ -104,12 +104,13 @@ def main() -> None:
                 obs_dim=data["observation_dim"], act_dim=data["action_dim"],
                 success=False, fixed_length=length if args.task != "stackcube" else None,
             ),
-            "rollouts": validate_zarr(
+        }
+        if args.rollouts is not None:
+            result["rollouts"] = validate_zarr(
                 args.rollouts.resolve(), episodes=None if args.allow_subset else config["selection"]["rollouts"],
                 obs_dim=data["observation_dim"], act_dim=data["action_dim"],
                 success=True, fixed_length=None,
-            ),
-        }
+            )
     print(json.dumps(result, indent=2, sort_keys=True))
 
 

@@ -1,4 +1,4 @@
-"""Curated CupCake simulation data mixed with nine real rollouts."""
+"""Curated CupCake simulation data mixed with ten real rollouts."""
 
 from __future__ import annotations
 
@@ -18,8 +18,7 @@ from .canonical_absolute_dataset import (
 )
 
 
-EXPECTED_REAL_ROLLOUTS = 9
-EXPECTED_REAL_DECISIONS = 220
+EXPECTED_REAL_ROLLOUTS = 10
 
 
 def _load_real_rollouts(root: Path) -> dict[str, np.ndarray]:
@@ -40,9 +39,7 @@ def _load_real_rollouts(root: Path) -> dict[str, np.ndarray]:
             raise ValueError(f"CupCake real manifest has invalid {key!r}")
     demos = manifest.get("demos", [])
     if len(demos) != EXPECTED_REAL_ROLLOUTS:
-        raise ValueError("CupCake requires exactly nine successful real rollouts")
-    if manifest.get("decisions") != EXPECTED_REAL_DECISIONS:
-        raise ValueError("CupCake requires the canonical 220 real decisions")
+        raise ValueError("CupCake requires exactly ten successful real rollouts")
 
     parts: list[dict[str, np.ndarray]] = []
     total = 0
@@ -57,6 +54,8 @@ def _load_real_rollouts(root: Path) -> dict[str, np.ndarray]:
                 raise ValueError(f"{path} is missing arrays: {sorted(missing)}")
             part = {key: arrays[key].copy() for key in required}
         count = int(demo["decisions"])
+        if count < 1:
+            raise ValueError(f"{path} contains no completed decisions")
         expected_shapes = {
             **{key: (count, 2, 84, 84, 3) for key in CAMERAS},
             "proprio": (count, 2, 8),
@@ -76,8 +75,8 @@ def _load_real_rollouts(root: Path) -> dict[str, np.ndarray]:
             raise ValueError(f"{path} contains a non-binary gripper target")
         parts.append(part)
         total += count
-    if total != EXPECTED_REAL_DECISIONS:
-        raise ValueError("CupCake per-rollout decision counts do not sum to 220")
+    if total != int(manifest.get("decisions", -1)):
+        raise ValueError("CupCake per-rollout counts disagree with the manifest")
     return {key: np.concatenate([part[key] for part in parts]) for key in parts[0]}
 
 

@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 export PYTHONNOUSERSITE=1
+export PYTHONUNBUFFERED=1
 set -Eeuo pipefail
 
 ROOT="$(cd "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
-CONFIG="${1:?usage: bash experiments/sim2sim/run.sh CONFIG.env}"
+CONFIG="${1:?usage: bash experiments/sim2sim/run.sh CONFIG.env [select|train|all]}"
+STAGE="${2:-all}"
+case "${STAGE}" in
+  all|select|train) ;;
+  *) printf 'stage must be all, select, or train\n' >&2; exit 2 ;;
+esac
 [[ -f "${CONFIG}" ]] || { printf 'missing config: %s\n' "${CONFIG}" >&2; exit 1; }
 CONFIG="$(readlink -f -- "${CONFIG}")"
 set -a
@@ -40,38 +46,46 @@ validate_args=()
   --target "${TARGET_ZARR}" --source "${SOURCE_ZARR}" \
   --rollouts "${ROLLOUT_ZARR}" "${validate_args[@]}" >/dev/null
 
-BASE_DIR="${OUTPUT_ROOT}/target_only"
+BASE_DIR="${BASE_DIR:-${OUTPUT_ROOT}/target_only}"
 INFLUENCE="${OUTPUT_ROOT}/influence.npz"
 SELECTION_DIR="${OUTPUT_ROOT}/tuco_${BUDGET}"
 RUN_DIR="${OUTPUT_ROOT}/cotrain_${BUDGET}"
 mkdir -p "${OUTPUT_ROOT}"
 
-if [[ ! -f "${BASE_DIR}/final.pt" ]]; then
-  [[ ! -e "${BASE_DIR}" ]] || { printf 'incomplete base run: %s\n' "${BASE_DIR}" >&2; exit 2; }
-  "${PY}" "${ROOT}/experiments/sim2sim/train_base.py" \
-    --target "${TARGET_ZARR}" --output "${BASE_DIR}" \
-    --steps "${STEPS}" --checkpoint-every "${CHECKPOINT_EVERY}" \
-    --keep-last "${KEEP_LAST}" --num-workers "${NUM_WORKERS}" \
-    --seed "${SEED}" --device "${DEVICE}"
+if [[ "${STAGE}" != train ]]; then
+  if [[ ! -f "${BASE_DIR}/final.pt" ]]; then
+    [[ ! -e "${BASE_DIR}" ]] || { printf 'incomplete base run: %s\n' "${BASE_DIR}" >&2; exit 2; }
+    "${PY}" "${ROOT}/experiments/sim2sim/train_base.py" \
+      --target "${TARGET_ZARR}" --output "${BASE_DIR}" \
+      --steps "${STEPS}" --checkpoint-every "${CHECKPOINT_EVERY}" \
+      --keep-last "${KEEP_LAST}" --num-workers "${NUM_WORKERS}" \
+      --seed "${SEED}" --device "${DEVICE}"
+  fi
+
+  if [[ ! -f "${INFLUENCE}" ]]; then
+    "${PY}" "${ROOT}/experiments/sim2sim/build_influence.py" \
+      --base "${BASE_DIR}/final.pt" \
+      --candidates "${SOURCE_ZARR}" \
+      --rollouts "${ROLLOUT_ZARR}" \
+      --output "${INFLUENCE}" --device "${DEVICE}" \
+      --projection-dim "${PROJECTION_DIM}" --gradient-batch "${GRADIENT_BATCH}"
+  fi
+
+  if [[ ! -f "${SELECTION_DIR}/selected_ids.json" ]]; then
+    [[ ! -e "${SELECTION_DIR}" ]] || {
+      printf 'incomplete selection directory: %s\n' "${SELECTION_DIR}" >&2
+      exit 2
+    }
+    "${PY}" -m tuco.cli.select \
+      --input "${INFLUENCE}" --budget "${BUDGET}" \
+      --output-dir "${SELECTION_DIR}"
+  fi
+
 fi
 
-if [[ ! -f "${INFLUENCE}" ]]; then
-  "${PY}" "${ROOT}/experiments/sim2sim/build_influence.py" \
-    --base "${BASE_DIR}/final.pt" \
-    --candidates "${SOURCE_ZARR}" \
-    --rollouts "${ROLLOUT_ZARR}" \
-    --output "${INFLUENCE}" --device "${DEVICE}" \
-    --projection-dim "${PROJECTION_DIM}" --gradient-batch "${GRADIENT_BATCH}"
-fi
-
-if [[ ! -f "${SELECTION_DIR}/selected_ids.json" ]]; then
-  [[ ! -e "${SELECTION_DIR}" ]] || {
-    printf 'incomplete selection directory: %s\n' "${SELECTION_DIR}" >&2
-    exit 2
-  }
-  "${PY}" -m tuco.cli.select \
-    --input "${INFLUENCE}" --budget "${BUDGET}" \
-    --output-dir "${SELECTION_DIR}"
+if [[ "${STAGE}" == select ]]; then
+  printf 'selection: %s\n' "${SELECTION_DIR}/selected_ids.json"
+  exit 0
 fi
 
 if [[ ! -f "${RUN_DIR}/final.pt" ]]; then

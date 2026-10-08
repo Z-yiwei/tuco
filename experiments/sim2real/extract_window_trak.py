@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
-"""Extract window-level projected gradients for Vision-DP TUCO.
-
-The candidate side uses one fixed visual repeat for each of the 1,200
-physical reset states. The other repeats are excluded from attribution and
-remain available only for final policy training. Every valid Diffusion-Policy
-window in the chosen repeat contributes to the TRAK covariance and its
-physical state's summed candidate gradient.
-
-The target side consists of decision-aligned, on-policy real robot rollouts.
-Every completed policy decision contributes only actions that were actually
-sent. Finalization sums both target and candidate windows, following the
-current main paper and appendix definitions.
-"""
+"""Extract window-level projected gradients for Vision-DP TUCO."""
 
 from __future__ import annotations
 
@@ -181,7 +169,7 @@ def _parameter_names(model: torch.nn.Module) -> list[str]:
 
 
 def _load_cupcake_absolute_decisions(root: Path):
-    """Load the prepared nine-rollout CupCake absolute-Q dataset."""
+    """Load the prepared ten-rollout CupCake absolute-Q dataset."""
 
     manifest_path = root / "manifest.json"
     if not manifest_path.is_file():
@@ -201,8 +189,8 @@ def _load_cupcake_absolute_decisions(root: Path):
         if manifest.get(key) != value:
             raise ValueError(f"{manifest_path}: invalid {key!r} contract")
     demos = manifest.get("demos", [])
-    if len(demos) != 9:
-        raise ValueError(f"CupCake requires exactly 9 real rollouts, got {len(demos)}")
+    if len(demos) != 10:
+        raise ValueError(f"CupCake requires exactly 10 real rollouts, got {len(demos)}")
 
     image_parts = {key: [] for key in CAMERA_KEYS}
     proprio_parts: list[np.ndarray] = []
@@ -241,8 +229,6 @@ def _load_cupcake_absolute_decisions(root: Path):
         rollout_name = f"trial_{int(demo['trial']):03d}"
         source_names.extend([rollout_name] * count)
         source_files.append(str(path))
-    if int(manifest.get("decisions", -1)) != 220:
-        raise ValueError("CupCake requires the canonical 220 real decisions")
     if sum(len(part) for part in action_parts) != int(manifest["decisions"]):
         raise ValueError("CupCake manifest decision count is inconsistent")
     return (

@@ -8,7 +8,7 @@ PY="${PY:-python}"
 
 : "${BASE_CONFIG:?set BASE_CONFIG to the resolved absolute-Q CupCake YAML}"
 : "${SELECTION:?set SELECTION to a curated selected_ids.json}"
-: "${REAL_ROOT:?set REAL_ROOT to the prepared nine-rollout directory}"
+: "${REAL_ROOT:?set REAL_ROOT to the prepared ten-rollout directory}"
 : "${RUN_DIR:?set RUN_DIR}"
 
 GPU="${GPU:-0}"

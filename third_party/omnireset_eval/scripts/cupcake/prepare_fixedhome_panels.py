@@ -1,17 +1,10 @@
 #!/usr/bin/env python3
-"""Create disjoint train/eval panels from a filtered CupCake FixedHome reset file.
-
-The Isaac collector consumes the train ``.pt`` directly.  MuJoCo consumes a
-larger, deterministically resampled train-attempt ``.npz`` and a disjoint
-held-out evaluation ``.npz``.  Only the train panel is sampled with
-replacement; no held-out object state can enter either simulator's BC data.
-"""
+"""Create disjoint training and evaluation reset panels for CupCake."""
 
 from __future__ import annotations
 
 import argparse
 import copy
-import hashlib
 import json
 import os
 import uuid
@@ -28,23 +21,6 @@ RESET_TYPE = "CupCakeSideLyingFront3cmFixedHome"
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise RuntimeError(message)
-
-
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def array_sha256(value: np.ndarray) -> str:
-    value = np.ascontiguousarray(value)
-    digest = hashlib.sha256()
-    digest.update(value.dtype.str.encode("ascii"))
-    digest.update(np.asarray(value.shape, dtype=np.int64).tobytes())
-    digest.update(value.view(np.uint8))
-    return digest.hexdigest()
 
 
 def stack_rows(value: Any) -> torch.Tensor:
@@ -165,7 +141,6 @@ def main() -> None:
     common = {
         "reset_type": np.asarray(RESET_TYPE),
         "source_reset_state": np.asarray(str(source)),
-        "source_reset_sha256": np.asarray(file_sha256(source)),
         "split_seed": np.asarray(args.split_seed, dtype=np.int64),
     }
     atomic_npz_save(
@@ -187,25 +162,20 @@ def main() -> None:
     report = {
         "schema_version": 1,
         "protocol_id": "cupcake-side-lying-front3cm-fixedhome-cotrain-v1",
-        "source": {"path": str(source), "sha256": file_sha256(source), "count": total},
+        "source": {"path": str(source), "count": total},
         "split_seed": args.split_seed,
         "attempt_seed": args.attempt_seed,
         "train": {
             "unique_count": len(train_indices),
             "source_indices": train_indices.tolist(),
-            "raw_state_sha256": array_sha256(raw[train_indices]),
             "isaac_pt": str(train_pt),
-            "isaac_pt_sha256": file_sha256(train_pt),
             "mujoco_attempt_count": args.a_attempt_count,
             "mujoco_attempt_npz": str(attempt_npz),
-            "mujoco_attempt_npz_sha256": file_sha256(attempt_npz),
         },
         "eval": {
             "count": len(eval_indices),
             "source_indices": eval_indices.tolist(),
-            "raw_state_sha256": array_sha256(eval_raw),
             "mujoco_eval_npz": str(eval_npz),
-            "mujoco_eval_npz_sha256": file_sha256(eval_npz),
         },
         "overlap": {"source_index": 0, "exact_raw_state": 0},
     }

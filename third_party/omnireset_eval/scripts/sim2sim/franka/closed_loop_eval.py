@@ -15,7 +15,6 @@ Run (rv_dp_mujoco):
 import argparse
 import collections
 import csv
-import hashlib
 import json
 import os
 import platform
@@ -154,17 +153,6 @@ def set_controller_gains(scale, kp, zeta):
     KD = 2.0 * np.sqrt(KP) * ZETA
 
 
-def file_md5(path, block_size=1 << 20):
-    if not path or not os.path.exists(path):
-        return None
-    h = hashlib.md5()
-    with open(path, "rb") as f:
-        while True:
-            chunk = f.read(block_size)
-            if not chunk:
-                break
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def git_state(path):
@@ -302,11 +290,8 @@ def zarr_signature(z):
     sig = {
         "raw_state_shape": list(raw.shape),
         "episode_ends_shape": list(ends.shape),
-        "episode_ends_md5": hashlib.md5(ends.tobytes()).hexdigest(),
+
     }
-    if raw.size:
-        probe = np.concatenate([raw[0].ravel(), raw[min(len(raw) - 1, 31)].ravel(), raw[-1].ravel()])
-        sig["raw_probe_md5"] = hashlib.md5(probe.astype(np.float64).tobytes()).hexdigest()
     return sig
 
 
@@ -1068,7 +1053,7 @@ def main():
         "profile": args.profile,
         "base_profile": base_profile,
         "checkpoint": os.path.abspath(args.checkpoint),
-        "checkpoint_md5": file_md5(args.checkpoint),
+
         "policy_iter": int(policy.ckpt_iter),
         "zarr": os.path.abspath(args.zarr),
         "zarr_signature": zarr_signature(z),

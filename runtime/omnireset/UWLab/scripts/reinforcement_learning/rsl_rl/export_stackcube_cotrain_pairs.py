@@ -11,7 +11,6 @@ IsaacSim observations.  Output is episode-major and frame-aligned with B147.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import shutil
@@ -256,14 +255,6 @@ class DPChunkSourcePolicy:
 
     def reset(self, dones):
         self._history_reset_mask |= dones.to(device=self.device, dtype=torch.bool)
-
-
-def md5(path: str | Path) -> str:
-    digest = hashlib.md5()
-    with open(path, "rb") as file:
-        for block in iter(lambda: file.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def policy_obs(obs):
@@ -699,9 +690,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg, agent_cfg: RslRlBaseRunnerCfg) -> None:
                 "episode-major"
             ),
             "checkpoint": str(Path(resume_path).resolve()),
-            "checkpoint_md5": md5(resume_path),
             "reset_state": str(Path(args_cli.reset_state).resolve()),
-            "reset_state_md5": md5(args_cli.reset_state),
             "source_b": str(Path(args_cli.reset_indices_zarr).resolve()),
             "episode_steps": int(args_cli.episode_steps),
             "physics_dt_s": float(env.unwrapped.physics_dt),

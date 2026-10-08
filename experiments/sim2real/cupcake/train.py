@@ -13,7 +13,7 @@ from omegaconf import OmegaConf
 
 from tuco.baseline_artifacts import load_curated_selection
 
-from .dataset import EXPECTED_REAL_DECISIONS, _load_real_rollouts
+from .dataset import _load_real_rollouts
 from .workspace import CupCakeCotrainWorkspace
 
 
@@ -53,9 +53,7 @@ def main() -> None:
     method = json.loads(
         (args.selection.parent / "metadata.json").read_text(encoding="utf-8")
     )["method"]
-    real = _load_real_rollouts(args.real_root)
-    if len(real["action"]) != EXPECTED_REAL_DECISIONS:
-        raise RuntimeError("CupCake real-data validation failed")
+    _load_real_rollouts(args.real_root)
 
     cfg = OmegaConf.load(args.base_config)
     if not cfg.task.abs_action:
@@ -95,12 +93,12 @@ def main() -> None:
     cfg.task.dataset.real_root = str(args.real_root.resolve())
     cfg.task.dataset.real_ratio = args.real_ratio
     cfg.task.dataset.domain_seed = args.seed
-    cfg.name = cfg.task_name = cfg.exp_name = f"cupcake_{method}_real9"
+    cfg.name = cfg.task_name = cfg.exp_name = f"cupcake_{method}_real10"
     cfg.task.name = cfg.logging.name = cfg.name
     cfg.logging.tags = [
         "cupcake",
         method,
-        "real9",
+        "real10",
         "absolute_q",
         "selected600",
         "ratio0p20",

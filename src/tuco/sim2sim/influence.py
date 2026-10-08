@@ -1,14 +1,4 @@
-"""TRAK featurize/finalize/score pipeline for deterministic MLP-BC.
-
-The policy-specific part of TRAK is the scalar model output.  For MLP-BC we
-use the per-example mean squared training loss and differentiate it with
-respect to every policy parameter. Everything after that follows the source
-CUPID experiment:
-
-1. featurize: per-example gradient followed by a shared Rademacher JL sketch;
-2. finalize: ``G (G.T G + lambda I)^-1`` over candidate-pool gradients;
-3. score: target projected gradients against finalized pool features.
-"""
+"""TRAK featurize/finalize/score pipeline for deterministic MLP-BC."""
 from __future__ import annotations
 
 import math
@@ -188,9 +178,3 @@ def finalize_features(
     xtx_inv = xtx_inv / inverse_scale
     finalized = gradients @ xtx_inv
     return finalized.detach().cpu().numpy().astype(np.float32)
-
-
-def influence_matrix(target_gradients: np.ndarray,
-                     train_features: np.ndarray) -> np.ndarray:
-    """TRAK ``score`` for one checkpoint with the source experiment's Q=1."""
-    return target_gradients @ train_features.T

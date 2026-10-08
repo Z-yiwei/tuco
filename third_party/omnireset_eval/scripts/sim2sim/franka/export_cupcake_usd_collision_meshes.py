@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import uuid
@@ -14,12 +13,6 @@ import numpy as np
 from pxr import Gf, Usd, UsdGeom, UsdPhysics
 
 
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def atomic_write(path: Path, text: str) -> None:
@@ -84,12 +77,12 @@ def export_mesh(source: Path, prim_path: str, output: Path) -> dict:
     atomic_write(output, "\n".join(lines) + "\n")
     return {
         "source_usd": str(source.resolve()),
-        "source_usd_sha256": file_sha256(source),
+
         "source_prim": prim_path,
         "source_approximation": prim.GetAttribute("physics:approximation").Get(),
         "source_meters_per_unit": meters_per_unit,
         "output_obj": str(output.resolve()),
-        "output_obj_sha256": file_sha256(output),
+
         "vertices": int(len(vertices)),
         "source_faces": int(len(counts)),
         "triangles": int(len(triangles)),
@@ -180,11 +173,11 @@ def export_visual_mesh(source: Path, prim_path: str, output: Path) -> dict:
     atomic_write(output, "\n".join(lines) + "\n")
     return {
         "source_usd": str(source.resolve()),
-        "source_usd_sha256": file_sha256(source),
+
         "source_prim": prim_path,
         "source_meters_per_unit": meters_per_unit,
         "output_obj": str(output.resolve()),
-        "output_obj_sha256": file_sha256(output),
+
         "vertices": int(len(vertices)),
         "source_faces": int(len(counts)),
         "triangles": int(len(triangles)),
@@ -241,7 +234,6 @@ def main() -> None:
         "assets": assets,
         "exporter": str(Path(__file__).resolve()),
     }
-    manifest["exporter_sha256"] = file_sha256(Path(__file__).resolve())
     atomic_write(outputs[3], json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     print(json.dumps(manifest, indent=2, sort_keys=True))
 
