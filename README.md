@@ -42,6 +42,12 @@
 
 </div>
 
+## Abstract
+
+Simulation demonstrations can supplement scarce real-world data for robot policy co-training.
+However, the value of using data curation to actively select these demonstrations for sim-to-real co-training remains underexplored. Existing curation methods also lack a unified criterion for measuring trajectory-level utility and set-level coverage from closed-loop target behavior. To address these gaps, we present the first systematic study of data curation for sim-to-real robot policy co-training and propose **T**rajectory-level **U**tility and set-level **C**overage **O**ptimization (**TUCO**). TUCO uses influence functions to trace how each source demonstration affects target-domain scoring rollouts.
+Our key insight is that these effects can be decomposed into an overall contribution to target return and variation across rollouts, providing a common closed-loop basis for measuring trajectory utility and set coverage. We further propose a performance-aligned subset optimizer that combines these measures in a unified curation objective to reduce redundancy and select complementary demonstrations. Extensive experiments on RoboMimic and OmniReset establish the value of active simulation data curation for sim-to-real policy co-training and show that TUCO achieves state-of-the-art performance across single-simulator, sim-to-sim, and sim-to-real settings.
+
 <p align="center">
   <a href="https://tuco-curation.github.io/">
     <img src="assets/tuco_main_figure.jpg" width="100%" alt="TUCO method overview">
@@ -50,15 +56,7 @@
 
 <p align="center"><em>Overview of TUCO.</em></p>
 
-<p align="center">
-  <a href="#environmental-setup">Setup</a> &nbsp;·&nbsp;
-  <a href="#data-preparation">Data</a> &nbsp;·&nbsp;
-  <a href="#data-selection">Selection</a> &nbsp;·&nbsp;
-  <a href="#training">Training</a> &nbsp;·&nbsp;
-  <a href="#evaluation">Evaluation</a> &nbsp;·&nbsp;
-  <a href="https://tuco-curation.github.io/">Project Page</a> &nbsp;·&nbsp;
-  <a href="https://arxiv.org/abs/2610.05407">Paper</a>
-</p>
+
 
 ---
 
