@@ -1,0 +1,42 @@
+[package]
+
+# Semantic Versioning is used: https://semver.org/
+version = "0.8.6"
+
+# Description
+title = "UW Lab framework for Robot Learning"
+description="Extension providing main framework interfaces and abstractions for robot learning."
+repository = "https://github.com/uw-lab/UWLab"
+category = "robotics"
+keywords = ["kit", "robotics", "learning", "ai"]
+
+[dependencies]
+"omni.isaac.core" = {}
+"omni.isaac.ml_archive" = {}
+"omni.replicator.core" = {}
+"isaaclab" = {}
+"isaaclab_assets" = {}
+"isaaclab_tasks" = {}
+
+[python.pipapi]
+requirements = [
+    "numpy",
+    "prettytable==3.3.0",
+    "toml",
+    "hidapi",
+    "trimesh"
+]
+
+modules = [
+    "numpy",
+    "prettytable",
+    "toml",
+    "hid",
+    "gymnasium",
+    "trimesh"
+]
+
+use_online_index=true
+
+[[python.module]]
+name = "uwlab"

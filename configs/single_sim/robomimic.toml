@@ -1,0 +1,70 @@
+[protocol]
+tasks = ["lift_mh", "square_mh", "transport_mh"]
+policy = "low_dim_diffusion_policy"
+num_demonstrations = 300
+num_seeds = 3
+rollouts = 100
+evaluation_rollouts = 50
+reported_late_evaluations = 10
+checkpoint_every = 50
+trak_projection_dim = 4000
+trak_loss = "square"
+diffusion_samples_per_transition = 64
+trak_ridge = 0.0
+
+[base_epochs.filter]
+lift_mh = 1001
+square_mh = 1751
+transport_mh = 1001
+
+[base_epochs.select]
+square_mh = 3001
+transport_mh = 2501
+
+[filtering]
+train_fraction = 0.64
+validation_fraction = 0.04
+heldout_fraction = 0.32
+budgets = [0.10, 0.25, 0.50, 0.75, 0.90]
+
+[curation_epochs.filter.lift_mh]
+r010 = 1001
+r025 = 1001
+r050 = 2301
+r075 = 2551
+r090 = 4051
+
+[curation_epochs.filter.square_mh]
+r010 = 1751
+r025 = 2001
+r050 = 2551
+r075 = 3051
+r090 = 4051
+
+[curation_epochs.filter.transport_mh]
+r010 = 1751
+r025 = 2001
+r050 = 2301
+r075 = 2551
+r090 = 3051
+
+[selection]
+tasks = ["square_mh", "transport_mh"]
+anchor_fraction = 0.16
+validation_fraction = 0.04
+candidate_fraction = 0.80
+budgets = [0.10, 0.25, 0.50, 0.75, 0.90]
+
+[curation_epochs.select.square_mh]
+r010 = 2751
+r025 = 2501
+r050 = 2001
+r075 = 1751
+r090 = 1501
+
+[curation_epochs.select.transport_mh]
+r010 = 2251
+r025 = 2001
+r050 = 1501
+r075 = 1251
+r090 = 1001

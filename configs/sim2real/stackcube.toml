@@ -1,0 +1,22 @@
+[data]
+target_domain = "real_fr3"
+source_domain = "isaacsim"
+real_rollouts = 10
+physical_states = 1200
+candidate_visual_repeats = 5
+attribution_visual_repeats = 1
+attribution_repeat_index = 0
+selected_states = 600
+training_visual_repeats = 10
+real_action_steps = 2
+
+[training]
+action_representation = "delta_joint_step_v1"
+normalization_population = "selected_sim_training_split"
+real_sampling_ratio = 0.20
+terminal_epoch = 150
+num_epoch_indices = 151
+batch_size = 64
+max_steps_per_epoch = 3022
+camera_mask = false
+initialization = "scratch"

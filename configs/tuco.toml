@@ -1,0 +1,11 @@
+[method]
+name = "tuco"
+aggregation = "target_sum_candidate_sum"
+return_success = 1.0
+return_failure = -1.0
+tau = 0.01
+lambda_cov = 0.2
+rho = 0.1
+projection_dim_state = 4000
+projection_dim_vision = 4096
+curvature_ridge = 0.0

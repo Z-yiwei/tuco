@@ -1,0 +1,188 @@
+{
+  "coacd_version": "1.0.11",
+  "definition": "CoACD convex pieces; one three-edge source hole filled before decomposition",
+  "parameters": {
+    "decimate": true,
+    "max_ch_vertex": 64,
+    "max_convex_hull": 8,
+    "mcts_iterations": 80,
+    "mcts_max_depth": 3,
+    "mcts_nodes": 10,
+    "merge": true,
+    "preprocess_mode": "off",
+    "real_metric": true,
+    "resolution": 1000,
+    "seed": 0,
+    "threshold_m": 0.003
+  },
+  "piece_count": 8,
+  "piece_volume_excess_ratio": 0.048826997807088324,
+  "piece_volume_sum_m3": 0.00036387789935363884,
+  "pieces": [
+    {
+      "bounds_max_m": [
+        0.046074654159419554,
+        0.04570232969744977,
+        0.05567368798683347
+      ],
+      "bounds_min_m": [
+        -0.04567847371356787,
+        -0.04592818285786932,
+        0.045145555022043996
+      ],
+      "faces": 124,
+      "file": "cupcake_coacd_piece_00.obj",
+      "name": "cupcake_coacd_piece_00",
+      "sha256": "35ecf402445fca2c9ba532647f07023ff2b37a6ace384948b7fd2220c66dabde",
+      "vertices": 64,
+      "volume_m3": 5.647521295902457e-05
+    },
+    {
+      "bounds_max_m": [
+        0.042288644482087356,
+        0.042830821965237444,
+        0.03674981810465111
+      ],
+      "bounds_min_m": [
+        -0.04227104745520181,
+        -0.04189067555329461,
+        2.7125336447615667e-05
+      ],
+      "faces": 124,
+      "file": "cupcake_coacd_piece_01.obj",
+      "name": "cupcake_coacd_piece_01",
+      "sha256": "4493ed5da80a7e2179cacc0b3d7fd29f0d59331209b149a36482b12f86f4cc0b",
+      "vertices": 64,
+      "volume_m3": 0.00016059535348870017
+    },
+    {
+      "bounds_max_m": [
+        0.01786661128257778,
+        -0.003611986402832004,
+        0.08309990429003176
+      ],
+      "bounds_min_m": [
+        -0.021984985015440932,
+        -0.006862881376773902,
+        0.08204083619655289
+      ],
+      "faces": 24,
+      "file": "cupcake_coacd_piece_02.obj",
+      "name": "cupcake_coacd_piece_02",
+      "sha256": "7222a9ce0f7c734357c6457fec8d291440fe936d157383a6838a277a78b89247",
+      "vertices": 14,
+      "volume_m3": 1.1896082406958622e-07
+    },
+    {
+      "bounds_max_m": [
+        0.03893188359634797,
+        0.03957235202136852,
+        0.08437823084356397
+      ],
+      "bounds_min_m": [
+        -0.03790296599428673,
+        -0.03804762345983969,
+        0.055675277042564704
+      ],
+      "faces": 124,
+      "file": "cupcake_coacd_piece_03.obj",
+      "name": "cupcake_coacd_piece_03",
+      "sha256": "60f3610ecbd1b2e127044d19301ade37da1ea91af3de8bb4b951a5a8d63ee2e8",
+      "vertices": 64,
+      "volume_m3": 9.08075804438619e-05
+    },
+    {
+      "bounds_max_m": [
+        0.030089791557415157,
+        0.04473791192026339,
+        0.045144822584095814
+      ],
+      "bounds_min_m": [
+        -0.030008239684796437,
+        -0.04528653152285488,
+        0.03675597207059948
+      ],
+      "faces": 122,
+      "file": "cupcake_coacd_piece_04.obj",
+      "name": "cupcake_coacd_piece_04",
+      "sha256": "2605c00d829147f1a093b06df87996009e8a5e6f270250ca4148bc70e09feb77",
+      "vertices": 63,
+      "volume_m3": 3.99545304987292e-05
+    },
+    {
+      "bounds_max_m": [
+        0.045472053292716474,
+        0.029849969210026417,
+        0.04514518843127399
+      ],
+      "bounds_min_m": [
+        0.02944557929215347,
+        -0.029840383352268345,
+        0.03675597207059948
+      ],
+      "faces": 78,
+      "file": "cupcake_coacd_piece_05.obj",
+      "name": "cupcake_coacd_piece_05",
+      "sha256": "1610ac4cd31d5160287596946d1d449d782afb4ab3ae89e62b2ed54e8d030eec",
+      "vertices": 41,
+      "volume_m3": 5.216038788002237e-06
+    },
+    {
+      "bounds_max_m": [
+        0.017085322325824187,
+        0.016169435213733874,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.017689617911964176,
+        -0.016073705730167774,
+        0.08310000839288734
+      ],
+      "faces": 80,
+      "file": "cupcake_coacd_piece_06.obj",
+      "name": "cupcake_coacd_piece_06",
+      "sha256": "04818c0c83c75b5fd94f166a43060ec90097abbde699fc426560b611ceb67950",
+      "vertices": 42,
+      "volume_m3": 5.37454370728796e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.029192691965455427,
+        0.030154800217365735,
+        0.045144822584095814
+      ],
+      "bounds_min_m": [
+        -0.04510768667952976,
+        -0.02978248431836257,
+        0.03675551699240224
+      ],
+      "faces": 64,
+      "file": "cupcake_coacd_piece_07.obj",
+      "name": "cupcake_coacd_piece_07",
+      "sha256": "6af0c9f3ee43475bd33546598a06ee9b8083a525fe14c06c9feda14e807f43cf",
+      "vertices": 34,
+      "volume_m3": 5.335678643963262e-06
+    }
+  ],
+  "schema_version": 1,
+  "source": "third_party/omnireset_eval/scripts/sim2sim/assets_mjcf/cupcake/cupcake_collision.obj",
+  "source_after_repair": {
+    "faces": 1336,
+    "hole_filled": true,
+    "vertices": 667,
+    "volume_m3": 0.00034693796032562394,
+    "watertight": true
+  },
+  "source_before_repair": {
+    "faces": 1335,
+    "vertices": 667,
+    "watertight": false
+  },
+  "source_sha256": "4b9cdff96bc9880ca1f70165427b43d50e12c95d708a587e4f72950e54978365",
+  "support_error": {
+    "maximum_m": 4.8397102927477675e-06,
+    "minimum_m": -0.002050481624375008,
+    "rms_m": 0.00074073719040697,
+    "sample_count": 4096
+  }
+}

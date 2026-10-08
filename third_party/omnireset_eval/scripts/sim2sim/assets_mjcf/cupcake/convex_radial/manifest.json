@@ -1,0 +1,325 @@
+{
+  "definition": "vertical radial convex sectors; internal cut faces are vertical",
+  "piece_count": 16,
+  "piece_volume_excess_ratio": -0.5535350320638993,
+  "piece_volume_sum_m3": 0.00015489564533259587,
+  "pieces": [
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0463706515729,
+        -0.0155377611518,
+        2.24972209253e-05
+      ],
+      "faces": 42,
+      "file": "cupcake_radial_piece_00.obj",
+      "name": "cupcake_radial_piece_00",
+      "sha256": "0c5cd734ad94dc327a25040fe4c210000e39efe54d03a4b629f5d85fcdf612bb",
+      "vertices": 23,
+      "volume_m3": 1.365036299525988e-05,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0425539687276,
+        -0.0306942965835,
+        2.24972209253e-05
+      ],
+      "faces": 38,
+      "file": "cupcake_radial_piece_01.obj",
+      "name": "cupcake_radial_piece_01",
+      "sha256": "f24c56f2458125d2268596d02efcdef0fa5cbd655764ed5430675e36ffdd4064",
+      "vertices": 21,
+      "volume_m3": 7.128920474731126e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0306708719581,
+        -0.042492505163,
+        2.24972209253e-05
+      ],
+      "faces": 22,
+      "file": "cupcake_radial_piece_02.obj",
+      "name": "cupcake_radial_piece_02",
+      "sha256": "f3383b87613bdf8b7f4703a5c2c462dbcdabb641c82fb3367e3ed3b8348eeb0d",
+      "vertices": 13,
+      "volume_m3": 2.3853286910384482e-05,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0149008100852,
+        -0.0463368222117,
+        2.24972209253e-05
+      ],
+      "faces": 40,
+      "file": "cupcake_radial_piece_03.obj",
+      "name": "cupcake_radial_piece_03",
+      "sha256": "5c5d999300bd0b024534c98f868c683cbd8aabdad1938ec150518731deef5966",
+      "vertices": 22,
+      "volume_m3": 1.9693470339755128e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0155304493383,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        -0.0466011427343,
+        2.24972209253e-05
+      ],
+      "faces": 42,
+      "file": "cupcake_radial_piece_04.obj",
+      "name": "cupcake_radial_piece_04",
+      "sha256": "78cda458b0713ead3611cc5bac1da4ef4f091e0be2441bedff32fbec28d634f9",
+      "vertices": 23,
+      "volume_m3": 2.592985494078414e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0308142062277,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        -0.0425591133535,
+        2.24972209253e-05
+      ],
+      "faces": 34,
+      "file": "cupcake_radial_piece_05.obj",
+      "name": "cupcake_radial_piece_05",
+      "sha256": "9b5e46243a62e25af2c5bdcfbaa99bbc77987351e5d7098a2602beb31d42cbb4",
+      "vertices": 19,
+      "volume_m3": 1.141107824469525e-05,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0426973067224,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        -0.0308153219521,
+        2.24972209253e-05
+      ],
+      "faces": 34,
+      "file": "cupcake_radial_piece_06.obj",
+      "name": "cupcake_radial_piece_06",
+      "sha256": "a17dfdb638dbd6147a871d295e98ee1794d9cb6f57cbfc299ef5b88a42a7b8e7",
+      "vertices": 19,
+      "volume_m3": 2.7621761126738738e-05,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0457547493279,
+        2.4001487456662653e-05,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        -0.0149226579815,
+        2.24972209253e-05
+      ],
+      "faces": 40,
+      "file": "cupcake_radial_piece_07.obj",
+      "name": "cupcake_radial_piece_07",
+      "sha256": "751b24f6db20b76d52ae9c4e5fc334fd07b887da1ac2bf1fcb63d887bf8aa74a",
+      "vertices": 22,
+      "volume_m3": 9.419058566994178e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0466940551996,
+        0.0150769269094,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 40,
+      "file": "cupcake_radial_piece_08.obj",
+      "name": "cupcake_radial_piece_08",
+      "sha256": "51345d379f2cb60e4377277016373d13b7906a766731792d0518cda88986a93d",
+      "vertices": 22,
+      "volume_m3": 1.1478843214745077e-05,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0430524982512,
+        0.0303657259792,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 36,
+      "file": "cupcake_radial_piece_09.obj",
+      "name": "cupcake_radial_piece_09",
+      "sha256": "791133eb93cc526eb0d863d3f985cefccdb1082140a4eb6a44d955aec35b5e3e",
+      "vertices": 20,
+      "volume_m3": 1.7999829587844676e-05,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0308292303234,
+        0.0403853394091,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 30,
+      "file": "cupcake_radial_piece_10.obj",
+      "name": "cupcake_radial_piece_10",
+      "sha256": "8683043a78244cc796730087298d7f703a5fdfd6142e83f1431d49709b82de46",
+      "vertices": 17,
+      "volume_m3": 8.55970277026393e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.017981512472,
+        0.0461708791554,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        0.0005497805424334629,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 24,
+      "file": "cupcake_radial_piece_11.obj",
+      "name": "cupcake_radial_piece_11",
+      "sha256": "13de218101ce8ffb32f73c2cb45f0867a0c93f0838156d68ee181ed2769f44ef",
+      "vertices": 14,
+      "volume_m3": 2.219436656477762e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        0.0459854565561,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0157016515732,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 34,
+      "file": "cupcake_radial_piece_12.obj",
+      "name": "cupcake_radial_piece_12",
+      "sha256": "2d245b056895809590824029cff122c220dc394e7bc2a9dc76f5a047395f863e",
+      "vertices": 19,
+      "volume_m3": 4.640090623162554e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        0.0429110936821,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0305886156857,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 24,
+      "file": "cupcake_radial_piece_13.obj",
+      "name": "cupcake_radial_piece_13",
+      "sha256": "c26787040882931df967193a4c51b933f2062fc12f83404addf46f128ff73a88",
+      "vertices": 14,
+      "volume_m3": 2.5430327691124396e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        0.0312536619604,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0429513975978,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 30,
+      "file": "cupcake_radial_piece_14.obj",
+      "name": "cupcake_radial_piece_14",
+      "sha256": "369904bba78bbd3d7a1c1cfe7df5a99adfab68e0f594c0b7390681790b8fc5c6",
+      "vertices": 17,
+      "volume_m3": 3.969312926267264e-06,
+      "watertight": true
+    },
+    {
+      "bounds_max_m": [
+        0.0005497805424334629,
+        0.0154768778011,
+        0.0998257026076
+      ],
+      "bounds_min_m": [
+        -0.0462015122175,
+        2.4001487456662653e-05,
+        2.24972209253e-05
+      ],
+      "faces": 42,
+      "file": "cupcake_radial_piece_15.obj",
+      "name": "cupcake_radial_piece_15",
+      "sha256": "ec771353a79df29a66abf9a12c98e214d0ae1e0fda9a34d42625ecc11b7f20e2",
+      "vertices": 23,
+      "volume_m3": 5.838595937864575e-06,
+      "watertight": true
+    }
+  ],
+  "schema_version": 1,
+  "sector_count": 16,
+  "source": "third_party/omnireset_eval/scripts/sim2sim/assets_mjcf/cupcake/cupcake_collision.obj",
+  "source_sha256": "4b9cdff96bc9880ca1f70165427b43d50e12c95d708a587e4f72950e54978365",
+  "source_volume_m3": 0.00034693796032562394,
+  "source_watertight_after_repair": true,
+  "source_watertight_before_repair": false,
+  "support_error": {
+    "maximum_m": 0.0029974226018756878,
+    "minimum_m": 0.0,
+    "rms_m": 0.000386505655978712,
+    "sample_count": 4096
+  }
+}

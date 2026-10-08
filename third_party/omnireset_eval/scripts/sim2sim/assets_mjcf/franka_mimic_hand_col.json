@@ -1,0 +1,21 @@
+{
+  "body_frame": "/panda/panda_hand",
+  "bounds_max_m": [
+    0.03161578252911569,
+    0.10042587667703631,
+    0.06596215069293965
+  ],
+  "bounds_min_m": [
+    -0.031635917723178864,
+    -0.10398972034454346,
+    -0.02592480182647705
+  ],
+  "output": "third_party/omnireset_eval/scripts/sim2sim/assets_mjcf/franka_mimic_hand_col.obj",
+  "output_sha256": "48919204f66c91263db7a6c493c0a411152ae05e1995e5f1fbbc3a1c1baf91a4",
+  "source_approximation": "convexHull",
+  "source_prim": "/panda/panda_hand/collisions",
+  "source_usd": "/path/to/cache/uwlab/assets/Assets/Isaac/5.1/Isaac/IsaacLab/Factory/franka_mimic.usd",
+  "source_usd_sha256": "86d0017a093669b222a8c640bf581cc3e3715035aa7c596600f478da011f6c8e",
+  "triangles": 200,
+  "vertices": 600
+}

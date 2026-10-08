@@ -1,0 +1,168 @@
+{
+  "assets": {
+    "cupcake": {
+      "bounds_max_m": [
+        0.04669405519962311,
+        0.046170879155397415,
+        0.09982570260763168
+      ],
+      "bounds_min_m": [
+        -0.046370651572942734,
+        -0.04660114273428917,
+        2.2497220925288275e-05
+      ],
+      "extents_m": [
+        0.09306470677256584,
+        0.09277202188968658,
+        0.0998032053867064
+      ],
+      "local_to_world_transform_row_major": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "output_obj": "third_party/omnireset_eval/scripts/sim2sim/assets_mjcf/cupcake/cupcake_collision.obj",
+      "output_obj_sha256": "4b9cdff96bc9880ca1f70165427b43d50e12c95d708a587e4f72950e54978365",
+      "source_approximation": "sdf",
+      "source_faces": 1335,
+      "source_meters_per_unit": 1.0,
+      "source_prim": "/cupcake/collisions/cupcake",
+      "source_usd": "artifacts/local_assets/Props/Custom/CupCake/cupcake.usd",
+      "source_usd_sha256": "8dadb21751218420bdd19ee32a60b0436963dd3233736f1b779eebf46b0d015f",
+      "triangles": 1335,
+      "vertices": 2046
+    },
+    "cupcake_visual": {
+      "bounds_max_m": [
+        0.04669405519962311,
+        0.046170879155397415,
+        0.09982570260763168
+      ],
+      "bounds_min_m": [
+        -0.046370651572942734,
+        -0.04660114273428917,
+        2.2497220925288275e-05
+      ],
+      "extents_m": [
+        0.09306470677256584,
+        0.09277202188968658,
+        0.0998032053867064
+      ],
+      "face_varying_normals": 4005,
+      "face_varying_uvs": 4005,
+      "local_to_world_transform_row_major": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "output_obj": "third_party/omnireset_eval/scripts/sim2sim/assets_mjcf/cupcake/cupcake_visual.obj",
+      "output_obj_sha256": "91d102bd0a73e36ea4df877322f90d6faa206f2a4b71d8dfdc1524fd3e5cb405",
+      "source_faces": 1335,
+      "source_meters_per_unit": 1.0,
+      "source_prim": "/cupcake/visuals/cupcake",
+      "source_usd": "artifacts/local_assets/Props/Custom/CupCake/cupcake.usd",
+      "source_usd_sha256": "8dadb21751218420bdd19ee32a60b0436963dd3233736f1b779eebf46b0d015f",
+      "triangles": 1335,
+      "vertices": 2046
+    },
+    "plate": {
+      "bounds_max_m": [
+        0.14971289038658142,
+        0.1499909907579422,
+        0.03698340058326721
+      ],
+      "bounds_min_m": [
+        -0.14989200234413147,
+        -0.1498979926109314,
+        -4.511841122933902e-09
+      ],
+      "extents_m": [
+        0.2996048927307129,
+        0.2998889833688736,
+        0.036983405095108335
+      ],
+      "local_to_world_transform_row_major": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "output_obj": "third_party/omnireset_eval/scripts/sim2sim/assets_mjcf/cupcake/plate_collision.obj",
+      "output_obj_sha256": "7d7bc8ee26f7cd932a857042d198e436920261a1d169c2e09a76d91ded1a0dee",
+      "source_approximation": "sdf",
+      "source_faces": 1334,
+      "source_meters_per_unit": 1.0,
+      "source_prim": "/plate/collisions/plate",
+      "source_usd": "artifacts/local_assets/Props/Custom/Plate/plate.usd",
+      "source_usd_sha256": "8b695897d5ff862c314ff21bfa1f52e171585dafcd163ffc1258853da1b54198",
+      "triangles": 1334,
+      "vertices": 843
+    }
+  },
+  "definition": "Current USD collision prims exported with authored world transforms; coordinates are meters and no print-oriented Z translation is applied",
+  "exporter": "third_party/omnireset_eval/scripts/sim2sim/franka/export_cupcake_usd_collision_meshes.py",
+  "exporter_sha256": "da9fa41288d8471db5da89e6b64302981bead6a2a82f8b9049482fb3f9367573",
+  "schema_version": 1
+}

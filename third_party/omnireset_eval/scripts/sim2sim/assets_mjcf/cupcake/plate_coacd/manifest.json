@@ -1,0 +1,973 @@
+{
+  "coacd_version": "1.0.11",
+  "definition": "CoACD convex pieces",
+  "parameters": {
+    "decimate": true,
+    "max_ch_vertex": 64,
+    "max_convex_hull": 48,
+    "mcts_iterations": 80,
+    "mcts_max_depth": 3,
+    "mcts_nodes": 10,
+    "merge": true,
+    "preprocess_mode": "off",
+    "real_metric": true,
+    "resolution": 1000,
+    "seed": 0,
+    "support_pad_height_m": 0.001,
+    "support_pad_radius_m": 0.0,
+    "support_pad_segments": 64,
+    "threshold_m": 0.0015
+  },
+  "piece_count": 48,
+  "piece_face_count": 3978,
+  "piece_prefix": "plate",
+  "piece_vertex_count": 2085,
+  "piece_volume_excess_ratio": 0.13121449603265423,
+  "piece_volume_sum_m3": 0.0005744538767128581,
+  "pieces": [
+    {
+      "bounds_max_m": [
+        0.1477848042353845,
+        0.08107584524582677,
+        0.005997084151463963
+      ],
+      "bounds_min_m": [
+        -0.0006560970141450296,
+        -0.1476671669012159,
+        5.81547478558514e-07
+      ],
+      "faces": 120,
+      "file": "plate_coacd_piece_000.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_000",
+      "sha256": "89d5893e1843abb9e44ac42d9de853cb0641b558990ac0da1cfada258b199e50",
+      "vertices": 62,
+      "volume_m3": 0.00016348941549312358
+    },
+    {
+      "bounds_max_m": [
+        0.12320567299140144,
+        0.14773493480143207,
+        0.0059970774484228405
+      ],
+      "bounds_min_m": [
+        -0.09400117301231017,
+        0.08107585418321493,
+        5.04063693131003e-05
+      ],
+      "faces": 122,
+      "file": "plate_coacd_piece_001.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_001",
+      "sha256": "51c80fd4d5baf9480116887ec323c923124fbd4b06a1f9108c49f51e1127df31",
+      "vertices": 63,
+      "volume_m3": 6.169662031905765e-05
+    },
+    {
+      "bounds_max_m": [
+        0.13717321089750348,
+        0.08522277547862729,
+        0.03691050435070149
+      ],
+      "bounds_min_m": [
+        0.11647144932194028,
+        0.06211931873768793,
+        0.011814202203285142
+      ],
+      "faces": 84,
+      "file": "plate_coacd_piece_002.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_002",
+      "sha256": "b798822cc9fa4eeecc3c3cd08c4685d34d036a5095bbfb316fca75f990b6d2f0",
+      "vertices": 44,
+      "volume_m3": 3.3320408497412003e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.09402740424656823,
+        0.11450602054564937,
+        0.005752094701490107
+      ],
+      "bounds_min_m": [
+        -0.1477406602360757,
+        -0.00024008721533095721,
+        0.0001332034504275513
+      ],
+      "faces": 112,
+      "file": "plate_coacd_piece_003.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_003",
+      "sha256": "f1f5669fc904922ce98a04b70175f06f5997bf862bad733f1ac09c240575d54e",
+      "vertices": 58,
+      "volume_m3": 2.2965384529158106e-05
+    },
+    {
+      "bounds_max_m": [
+        -0.0006762575274934488,
+        -0.12653136106952237,
+        0.011185094981805855
+      ],
+      "bounds_min_m": [
+        -0.04890635214562101,
+        -0.1487673772588429,
+        0.005658614090000451
+      ],
+      "faces": 54,
+      "file": "plate_coacd_piece_004.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_004",
+      "sha256": "62dddb0172cfe02af285f6d92fc7845aa9c0694640377c8ccbda1b1ab343948c",
+      "vertices": 29,
+      "volume_m3": 2.7613693407935243e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.000666821879940487,
+        -0.07587409302671333,
+        0.005658073378016597
+      ],
+      "bounds_min_m": [
+        -0.06860427075142349,
+        -0.14779905593833553,
+        0.00010626392815758431
+      ],
+      "faces": 72,
+      "file": "plate_coacd_piece_005.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_005",
+      "sha256": "cfc9928de59db963f1f8b98fa74048e4ce2872d67fbaa6ef7ea66ddd373a1c45",
+      "vertices": 38,
+      "volume_m3": 2.4133902635378507e-05
+    },
+    {
+      "bounds_max_m": [
+        -0.06860780995713599,
+        -0.0002527872439104113,
+        0.005658073378016597
+      ],
+      "bounds_min_m": [
+        -0.14789518767741194,
+        -0.13066671738465196,
+        0.00016769506569514966
+      ],
+      "faces": 122,
+      "file": "plate_coacd_piece_006.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_006",
+      "sha256": "338de7faa97b099da417f9b44331c16fda3551a57f21d47bad5eaab7a41c0640",
+      "vertices": 63,
+      "volume_m3": 3.8936176744133036e-05
+    },
+    {
+      "bounds_max_m": [
+        0.12382350569771323,
+        0.11403267859376687,
+        0.036932347327371565
+      ],
+      "bounds_min_m": [
+        0.0865385633841347,
+        0.08522711011188629,
+        0.008859970889515189
+      ],
+      "faces": 96,
+      "file": "plate_coacd_piece_007.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_007",
+      "sha256": "ac365e1fa783e80c9aa84dec811ef4867935039244558731b3fac95416ab1f4e",
+      "vertices": 50,
+      "volume_m3": 6.834464313967176e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.08015488865141393,
+        -0.07896970935252598,
+        0.008205273691378535
+      ],
+      "bounds_min_m": [
+        -0.1256733104361651,
+        -0.10884235729411375,
+        0.005658073378016597
+      ],
+      "faces": 44,
+      "file": "plate_coacd_piece_008.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_008",
+      "sha256": "35212f1e7ba16f755da7f402a86567f7bf46d12c1343f2e4ffad6776afeda6ed",
+      "vertices": 24,
+      "volume_m3": 1.0276371914522826e-06
+    },
+    {
+      "bounds_max_m": [
+        0.14602615861702173,
+        -0.025261085164433907,
+        0.010276880948214436
+      ],
+      "bounds_min_m": [
+        0.10581885124716799,
+        -0.08819635608329876,
+        0.005907990680388763
+      ],
+      "faces": 78,
+      "file": "plate_coacd_piece_009.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_009",
+      "sha256": "64d004dc8a95e4b1b06ec6aa2cfcf5319afc5b5fe5bb1df7ae23f59b53252140",
+      "vertices": 41,
+      "volume_m3": 2.8408130055312117e-06
+    },
+    {
+      "bounds_max_m": [
+        0.05211463095709317,
+        0.14832005666706774,
+        0.01151913209874058
+      ],
+      "bounds_min_m": [
+        -0.000666821879940487,
+        0.13022343649232643,
+        0.0059982393088840145
+      ],
+      "faces": 54,
+      "file": "plate_coacd_piece_010.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_010",
+      "sha256": "80776f1ec49afde293d19eef585fcb91883a55a0ee1c64b204aa5fec25d14894",
+      "vertices": 29,
+      "volume_m3": 2.1511932163520042e-06
+    },
+    {
+      "bounds_max_m": [
+        0.14971215199270982,
+        0.0251933131044659,
+        0.036733908263644074
+      ],
+      "bounds_min_m": [
+        0.14081356996923192,
+        -0.013418514074020713,
+        0.008378397603134665
+      ],
+      "faces": 124,
+      "file": "plate_coacd_piece_011.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_011",
+      "sha256": "cc9b753e1bcdab0b1b891f2b468afefda2f472a897e171a273ff097d333ca591",
+      "vertices": 64,
+      "volume_m3": 6.32674010444285e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.050368888688065286,
+        0.08266000623508561,
+        0.005485780643359615
+      ],
+      "bounds_min_m": [
+        -0.09402740424656823,
+        -0.00024008721533095721,
+        0.00012061290485309087
+      ],
+      "faces": 24,
+      "file": "plate_coacd_piece_012.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_012",
+      "sha256": "f43e3e9bb8b6d9af191e9644f00e15a52f018b17b636bf441b19daba166e5be4",
+      "vertices": 14,
+      "volume_m3": 1.9022682209184223e-05
+    },
+    {
+      "bounds_max_m": [
+        -0.1403493508514914,
+        0.027552075291454613,
+        0.03698339992290499
+      ],
+      "bounds_min_m": [
+        -0.1498913354488151,
+        -0.03218253147547813,
+        0.00864143610850346
+      ],
+      "faces": 116,
+      "file": "plate_coacd_piece_013.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_013",
+      "sha256": "9bdf99acaf2301fd78a8d0f351429a781ec5ba72e5bde5b2327eca747b67d4c0",
+      "vertices": 60,
+      "volume_m3": 1.1422192360253477e-05
+    },
+    {
+      "bounds_max_m": [
+        -0.11201833980628347,
+        -0.00024276843177982156,
+        0.011764602491914952
+      ],
+      "bounds_min_m": [
+        -0.14885715451493547,
+        -0.07895351480517483,
+        0.005658669948676469
+      ],
+      "faces": 110,
+      "file": "plate_coacd_piece_014.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_014",
+      "sha256": "75e9bc766ff64173332411e6d8f186d8e0751832aa09b4d7cb7a2a43417ed4b1",
+      "vertices": 57,
+      "volume_m3": 5.320750112152364e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.04880736610302302,
+        -0.00024749184142390426,
+        0.00547586907988698
+      ],
+      "bounds_min_m": [
+        -0.06860427075142349,
+        -0.07587408408932517,
+        0.0001616366336942357
+      ],
+      "faces": 22,
+      "file": "plate_coacd_piece_015.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_015",
+      "sha256": "c87b1178cdaea6d4feb86a322d23f2c21dca142932966d8e04868a79146abfd5",
+      "vertices": 13,
+      "volume_m3": 7.826596380845608e-06
+    },
+    {
+      "bounds_max_m": [
+        0.1482527301300403,
+        0.05285105059024061,
+        0.011813634679136799
+      ],
+      "bounds_min_m": [
+        0.1271728812856346,
+        -0.025253445931901687,
+        0.0059982393088840145
+      ],
+      "faces": 90,
+      "file": "plate_coacd_piece_016.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_016",
+      "sha256": "fad31c6c2cd1277a3616991809fc3b21e00b9fa59753ff565450a94ecbab7a16",
+      "vertices": 47,
+      "volume_m3": 3.848099395212018e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.024699746880696115,
+        0.14636002488123076,
+        0.008631522310683783
+      ],
+      "bounds_min_m": [
+        -0.08523883253398723,
+        0.1047961560490741,
+        0.005752924761415734
+      ],
+      "faces": 70,
+      "file": "plate_coacd_piece_017.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_017",
+      "sha256": "a025a7f138898804756220f377243c36fb88821be62484f5b304cdadb73cbb6c",
+      "vertices": 37,
+      "volume_m3": 2.2951771837733716e-06
+    },
+    {
+      "bounds_max_m": [
+        0.06704033284205548,
+        -0.12641775792858398,
+        0.0369086945295985
+      ],
+      "bounds_min_m": [
+        0.01699418552704791,
+        -0.14927630789039,
+        0.008554169216134047
+      ],
+      "faces": 114,
+      "file": "plate_coacd_piece_018.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_018",
+      "sha256": "ed1e0361fed62392549c0cca321dc2f8d2a72a6da4364a469a0dea523e43af69",
+      "vertices": 59,
+      "volume_m3": 1.0038833490131429e-05
+    },
+    {
+      "bounds_max_m": [
+        0.01699418217552735,
+        -0.1427139412579129,
+        0.03690786782119344
+      ],
+      "bounds_min_m": [
+        -0.022669929733736324,
+        -0.1498972954947233,
+        0.010219526376852667
+      ],
+      "faces": 92,
+      "file": "plate_coacd_piece_019.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_019",
+      "sha256": "6d2d44cb8b538dc48bad28057b6a4a65c9a1990b181cca2021192b520a3dff09",
+      "vertices": 48,
+      "volume_m3": 5.773822926249977e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.022669927499389283,
+        -0.126017148441571,
+        0.0369165571968348
+      ],
+      "bounds_min_m": [
+        -0.07121852828817152,
+        -0.14856532078725648,
+        0.011185766961678353
+      ],
+      "faces": 112,
+      "file": "plate_coacd_piece_020.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_020",
+      "sha256": "194c8c74976323bfdc41acf85d46294075a27e2ac39ab7484b2a280390c44911",
+      "vertices": 58,
+      "volume_m3": 7.861672445251391e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.12025474180338536,
+        -0.032185592530923915,
+        0.036929393520583734
+      ],
+      "bounds_min_m": [
+        -0.1468435073375094,
+        -0.08026861572379014,
+        0.011764993502647078
+      ],
+      "faces": 84,
+      "file": "plate_coacd_piece_021.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_021",
+      "sha256": "3c668cb50fc7671f29484c297f4ad895bf8311199bfd1ac2f502e9323022750a",
+      "vertices": 44,
+      "volume_m3": 8.062488417176329e-06
+    },
+    {
+      "bounds_max_m": [
+        0.1197592641801957,
+        -0.08819792906361543,
+        0.010276453629342899
+      ],
+      "bounds_min_m": [
+        0.0821506811664629,
+        -0.11145531890957816,
+        0.0059079929147358035
+      ],
+      "faces": 42,
+      "file": "plate_coacd_piece_022.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_022",
+      "sha256": "2aba74b37c31fcae58e8e414e8d541049f900e1f90c6bf10822c53e73947eaaa",
+      "vertices": 23,
+      "volume_m3": 1.129970157594359e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.000666821879940487,
+        0.08264242639256923,
+        0.005619995635748642
+      ],
+      "bounds_min_m": [
+        -0.05036889315675937,
+        -0.07585857772086256,
+        9.969047916378801e-05
+      ],
+      "faces": 42,
+      "file": "plate_coacd_piece_023.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_023",
+      "sha256": "25dac72ff7503f3a1e6dee5990e32d1d418a19f6d95c5b7fb39ae50a89e2e6be",
+      "vertices": 23,
+      "volume_m3": 4.20309198883342e-05
+    },
+    {
+      "bounds_max_m": [
+        0.09821388466116182,
+        0.14097464970808796,
+        0.036933346080498766
+      ],
+      "bounds_min_m": [
+        0.05212149040250818,
+        0.1140326964685432,
+        0.008863583828680034
+      ],
+      "faces": 86,
+      "file": "plate_coacd_piece_024.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_024",
+      "sha256": "dba586f39541f5e94d97a84f550436d8307ab5b65316073ada37b13018aeccb0",
+      "vertices": 45,
+      "volume_m3": 7.85831876743573e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.04890878311520131,
+        -0.12269488888933586,
+        0.013046397674954522
+      ],
+      "bounds_min_m": [
+        -0.07376669383945506,
+        -0.14094365916016205,
+        0.008617959824146612
+      ],
+      "faces": 42,
+      "file": "plate_coacd_piece_025.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_025",
+      "sha256": "cb2ef92a0d21f76c010a3ef0ec5a13e2a6cebaefd0c35855a66eee95707ed3a8",
+      "vertices": 23,
+      "volume_m3": 6.156572620137782e-07
+    },
+    {
+      "bounds_max_m": [
+        -0.04890891270732967,
+        -0.10884361746584471,
+        0.008617959824146612
+      ],
+      "bounds_min_m": [
+        -0.10084943775472968,
+        -0.14029230231085127,
+        0.005658073378016597
+      ],
+      "faces": 70,
+      "file": "plate_coacd_piece_026.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_026",
+      "sha256": "40c395f09027f6f19d7a0aabf8126cb1bb473407fb88956b09b42f9028fbf1fe",
+      "vertices": 37,
+      "volume_m3": 1.5048839097687592e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.0006716368978132392,
+        0.1499787822857695,
+        0.03687885705921673
+      ],
+      "bounds_min_m": [
+        -0.049909010911450155,
+        0.1342520357058504,
+        0.008631522310683783
+      ],
+      "faces": 92,
+      "file": "plate_coacd_piece_027.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_027",
+      "sha256": "cf41a9456fca6baa1e4c1f256010f6a3aef3cc5362cfb0357d61f230e3a79e5d",
+      "vertices": 48,
+      "volume_m3": 9.768805414372676e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.09241701202305133,
+        -0.0802686246611783,
+        0.036916659976798674
+      ],
+      "bounds_min_m": [
+        -0.12711504520766026,
+        -0.10884361746584471,
+        0.008205995385472687
+      ],
+      "faces": 102,
+      "file": "plate_coacd_piece_028.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_028",
+      "sha256": "2f336135f674dfba1beb414bbcd9c56de42f6b11fbe807c3a6fd15a35303a130",
+      "vertices": 53,
+      "volume_m3": 6.291987251334795e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.10549700472286215,
+        0.08800892580191202,
+        0.012339791009194336
+      ],
+      "bounds_min_m": [
+        -0.13093543902654176,
+        0.04208776743176511,
+        0.005752643233688603
+      ],
+      "faces": 42,
+      "file": "plate_coacd_piece_029.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_029",
+      "sha256": "01359574d93077054bc07cc3d1694b69bb7da6760c2551a573db1c726dbeb1be",
+      "vertices": 23,
+      "volume_m3": 1.7585364741001434e-06
+    },
+    {
+      "bounds_max_m": [
+        0.10601375780822409,
+        -0.10646533378876123,
+        0.036653514222771924
+      ],
+      "bounds_min_m": [
+        0.06667857418138654,
+        -0.1345732497506473,
+        0.008554169216134047
+      ],
+      "faces": 108,
+      "file": "plate_coacd_piece_030.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_030",
+      "sha256": "35b507b9712f4d679fca3f7b19858723f65b53dddfc3c4ac98106b2934a197a2",
+      "vertices": 56,
+      "volume_m3": 7.140592381502094e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.04990901538014424,
+        0.14190776665662172,
+        0.03686869301452849
+      ],
+      "bounds_min_m": [
+        -0.0991210362579101,
+        0.10238079114850282,
+        0.008631522310683783
+      ],
+      "faces": 114,
+      "file": "plate_coacd_piece_031.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_031",
+      "sha256": "b4655bb418a79b9b0737ed8815d2fee4e7c81a229c95887a6a8a20575b9c9a0d",
+      "vertices": 59,
+      "volume_m3": 1.2245218369439707e-05
+    },
+    {
+      "bounds_max_m": [
+        -0.11499887832211086,
+        -0.04742438452931418,
+        0.013036554259066628
+      ],
+      "bounds_min_m": [
+        -0.14096592338607222,
+        -0.09482738866903127,
+        0.007775183112336766
+      ],
+      "faces": 58,
+      "file": "plate_coacd_piece_032.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_032",
+      "sha256": "51b22ef072dca6bb9672b06488b0cb4c4a6e039dc31fe02999fb9b2cbac20110",
+      "vertices": 31,
+      "volume_m3": 1.4270894657477205e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.08523934196511251,
+        0.12161957378090768,
+        0.012339146400073086
+      ],
+      "bounds_min_m": [
+        -0.12429683647303527,
+        0.08185973462420491,
+        0.005753850898264112
+      ],
+      "faces": 78,
+      "file": "plate_coacd_piece_033.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_033",
+      "sha256": "73e6fec2f55664e970c4f463cf8173fa83f79c0b3186e1835fc31017a7c034b3",
+      "vertices": 41,
+      "volume_m3": 2.459953709082663e-06
+    },
+    {
+      "bounds_max_m": [
+        0.13910731532027995,
+        0.08521961164321763,
+        0.011814203320458662
+      ],
+      "bounds_min_m": [
+        0.10846933201814017,
+        0.05285105505893469,
+        0.005998439282944161
+      ],
+      "faces": 48,
+      "file": "plate_coacd_piece_034.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_034",
+      "sha256": "88ec0b1fd7346031a2be446281af3d0976bf4efb6a138c54c1b77c5ccc9b6295",
+      "vertices": 26,
+      "volume_m3": 1.751624929613453e-06
+    },
+    {
+      "bounds_max_m": [
+        0.04551106743387927,
+        -0.13106190187705008,
+        0.010218684028018316
+      ],
+      "bounds_min_m": [
+        -0.0006668174112464055,
+        -0.148482658884138,
+        0.005907991797562283
+      ],
+      "faces": 50,
+      "file": "plate_coacd_piece_035.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_035",
+      "sha256": "e5a78526a94a4f3caca5567217ac8d5cd70c53a2d7c7e9c7849631a6f40def76",
+      "vertices": 27,
+      "volume_m3": 1.7205421617261597e-06
+    },
+    {
+      "bounds_max_m": [
+        0.09840780810952,
+        -0.11145531890957816,
+        0.010276880948214436
+      ],
+      "bounds_min_m": [
+        0.04551297556625204,
+        -0.1412040946512284,
+        0.005907991797562283
+      ],
+      "faces": 78,
+      "file": "plate_coacd_piece_036.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_036",
+      "sha256": "7e91ee6d2d26c11dfc99a467705f84befe8e686244e29589adbec66e80cb64c0",
+      "vertices": 41,
+      "volume_m3": 1.5868592058847106e-06
+    },
+    {
+      "bounds_max_m": [
+        0.1482181781874026,
+        0.06211589124932747,
+        0.03680370032780802
+      ],
+      "bounds_min_m": [
+        0.13057779380360005,
+        0.02519331533881294,
+        0.011814203879045422
+      ],
+      "faces": 88,
+      "file": "plate_coacd_piece_037.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_037",
+      "sha256": "d75a4bb3acdfa5b4f5f47c8f9d3c31b7e113de0cdba493d4ad9eaf0f65b676f0",
+      "vertices": 46,
+      "volume_m3": 5.2154520073693965e-06
+    },
+    {
+      "bounds_max_m": [
+        0.05210959920755747,
+        0.14998943565245965,
+        0.03697080937733053
+      ],
+      "bounds_min_m": [
+        -0.000658706731488591,
+        0.13449066396979933,
+        0.008329720118505532
+      ],
+      "faces": 106,
+      "file": "plate_coacd_piece_038.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_038",
+      "sha256": "70bc90c7b21916bf59f5248ee86ab883b2c3e317a41b43042ae4871de3ac0fc8",
+      "vertices": 55,
+      "volume_m3": 1.0430657012948592e-05
+    },
+    {
+      "bounds_max_m": [
+        0.12114636469785117,
+        0.13904246682376653,
+        0.008859691596135099
+      ],
+      "bounds_min_m": [
+        0.05211698149018001,
+        0.08523060463065797,
+        0.0059982393088840145
+      ],
+      "faces": 82,
+      "file": "plate_coacd_piece_039.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_039",
+      "sha256": "c8ad2a3826018ed34ad35406c06e2e0384655d2148372c1228b944a60d546bfe",
+      "vertices": 43,
+      "volume_m3": 2.4002714250003538e-06
+    },
+    {
+      "bounds_max_m": [
+        0.14491567026300742,
+        -0.040378469447672566,
+        0.03692754012971346
+      ],
+      "bounds_min_m": [
+        0.12791949281798534,
+        -0.07913179782424799,
+        0.010277734468783991
+      ],
+      "faces": 106,
+      "file": "plate_coacd_piece_040.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_040",
+      "sha256": "6bafc19ad3deb699888080ff5a591a510d57af232942cf512dc1adb152845405",
+      "vertices": 55,
+      "volume_m3": 4.936953969827011e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.07122599100728753,
+        -0.10884361746584471,
+        0.03672562330481709
+      ],
+      "bounds_min_m": [
+        -0.10368250936586954,
+        -0.132511304927589,
+        0.008617959824146612
+      ],
+      "faces": 102,
+      "file": "plate_coacd_piece_041.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_041",
+      "sha256": "788dd8e709528c0c8ce26422c5a60789faad943fb3f7d9464242a4aedc75ecf6",
+      "vertices": 53,
+      "volume_m3": 5.090900466798847e-06
+    },
+    {
+      "bounds_max_m": [
+        0.1279184203314058,
+        -0.06655006004582371,
+        0.03692129624690817
+      ],
+      "bounds_min_m": [
+        0.09670856037288775,
+        -0.10645490385677515,
+        0.010277735027370751
+      ],
+      "faces": 116,
+      "file": "plate_coacd_piece_042.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_042",
+      "sha256": "d5eb9ad6c7c574ae3cd4390e187ed05667ade8d0180d16b489a299cce2224003",
+      "vertices": 60,
+      "volume_m3": 7.1359035152296856e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.0991210362579101,
+        0.11260872028732767,
+        0.036915357352473935
+      ],
+      "bounds_min_m": [
+        -0.13093543902654176,
+        0.06165061082156788,
+        0.012339789892020815
+      ],
+      "faces": 102,
+      "file": "plate_coacd_piece_043.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_043",
+      "sha256": "beff1e7e964de42cab83d1518363e4e1ddd9557bfae4999a5ed0ce49fdf9f2a7",
+      "vertices": 53,
+      "volume_m3": 7.969728850012752e-06
+    },
+    {
+      "bounds_max_m": [
+        0.14927211968651036,
+        -0.013192498699116652,
+        0.036937200329144014
+      ],
+      "bounds_min_m": [
+        0.13620332553406764,
+        -0.04037467552639742,
+        0.0075171864110653575
+      ],
+      "faces": 84,
+      "file": "plate_coacd_piece_044.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_044",
+      "sha256": "99ee821c3a94b2ff6150e1107460cda6e85113b578806248dd46e50cbf71d795",
+      "vertices": 44,
+      "volume_m3": 4.743115665121792e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.13093543902654176,
+        0.06977659138791736,
+        0.008640473104928909
+      ],
+      "bounds_min_m": [
+        -0.1482631041985251,
+        -0.00024008721533095721,
+        0.0057526443508621235
+      ],
+      "faces": 80,
+      "file": "plate_coacd_piece_045.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_045",
+      "sha256": "3924d03df72e1f0ebbb05b1569d6c1ff9f855abae3e2c6574b06f31fc3c31b45",
+      "vertices": 42,
+      "volume_m3": 1.731886468957086e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.13093667238610823,
+        0.07351238389044902,
+        0.036979719953328924
+      ],
+      "bounds_min_m": [
+        -0.14775680115909787,
+        0.02755479896049725,
+        0.008641038394730212
+      ],
+      "faces": 112,
+      "file": "plate_coacd_piece_046.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_046",
+      "sha256": "2e3cf5a3260ec43756efcbdfef209c8acb0a4b39807969a9e5987cb00d48dbfe",
+      "vertices": 58,
+      "volume_m3": 6.819675205932375e-06
+    },
+    {
+      "bounds_max_m": [
+        -0.0006668196455934462,
+        0.14834415186555486,
+        0.008631522310683783
+      ],
+      "bounds_min_m": [
+        -0.02469480897373612,
+        0.13237186842063692,
+        0.005752924761415734
+      ],
+      "faces": 32,
+      "file": "plate_coacd_piece_047.obj",
+      "kind": "coacd",
+      "name": "plate_coacd_piece_047",
+      "sha256": "40591a0795c2e67ecd179483d8d2d109104c52645540381aa05a7bb04f2d1c1b",
+      "vertices": 18,
+      "volume_m3": 7.203001143479177e-07
+    }
+  ],
+  "schema_version": 1,
+  "source": "third_party/omnireset_eval/scripts/sim2sim/assets_mjcf/cupcake/plate_collision.obj",
+  "source_after_repair": {
+    "bounds_max_m": [
+      0.149712890387,
+      0.149990990758,
+      0.0369834005833
+    ],
+    "bounds_min_m": [
+      -0.149892002344,
+      -0.149897992611,
+      -4.51184112293e-09
+    ],
+    "faces": 1334,
+    "hole_filled": false,
+    "vertices": 669,
+    "volume_m3": 0.0005078204697053985,
+    "watertight": true
+  },
+  "source_before_repair": {
+    "faces": 1334,
+    "vertices": 669,
+    "watertight": true
+  },
+  "source_sha256": "7d7bc8ee26f7cd932a857042d198e436920261a1d169c2e09a76d91ded1a0dee",
+  "support_error": {
+    "maximum_m": 5.021062746080052e-06,
+    "minimum_m": -0.0008673370474069908,
+    "rms_m": 9.21071979049446e-05,
+    "sample_count": 4096
+  },
+  "top_z_error_m": -6.603950095107614e-10
+}

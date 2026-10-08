@@ -1,0 +1,27 @@
+[data]
+target_domain = "mujoco"
+source_domain = "isaacsim"
+target_demonstrations = 500
+source_demonstrations = 3000
+trajectory_length = 160
+observation_dim = 200
+action_dim = 7
+
+[selection]
+budgets = [0.05, 0.10, 0.15, 0.25, 0.50, 0.75]
+rollouts = 100
+
+[training]
+steps = 50000
+batch_size = 256
+learning_rate = 1e-4
+weight_decay = 1e-6
+warmup_steps = 500
+checkpoint_every = 1000
+keep_last = 5
+
+[evaluation]
+late_checkpoints = 5
+rollouts_per_checkpoint = 50
+environment = "mujoco"
+contract = "mujoco-peg-stage1-active-big-legacygripper-eval-v1"

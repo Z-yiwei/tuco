@@ -1,0 +1,37 @@
+sysid:
+  armature:
+  - 0.1
+  - 0.169576
+  - 0.1
+  - 0.355158
+  - 0.464084
+  - 0.082386
+  - 0.074442
+  static_friction:
+  - 0.0
+  - 2.256945
+  - 0.0
+  - 0.96676
+  - 2.225587
+  - 0.238101
+  - 0.841345
+  dynamic_ratio:
+  - 0.0
+  - 0.309261
+  - 0.0
+  - 0.723147
+  - 0.858162
+  - 0.306374
+  - 0.362609
+  viscous_friction:
+  - 0.0
+  - 2.913684
+  - 0.0
+  - 0.871234
+  - 0.122565
+  - 1.627986
+  - 1.017798
+  motor_delay: 8
+  _note: 'B3: j1,j3 (1-based) = nominal asset defaults (nullspace, excluded from sysid
+    loss). j2,j4-j7 identified. RMSE 0.382deg/joint over identified joints. delay=8
+    steps=8ms@1kHz.'

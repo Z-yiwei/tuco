@@ -1,0 +1,31 @@
+# Runtime additions installed after the conda portion of conda_environment.yaml.
+# Torch is pinned explicitly so pip cannot replace the compatible conda build.
+torch==1.12.1
+torchvision==0.13.1
+functorch==0.2.1
+huggingface-hub==0.17.3
+accelerate==0.21.0
+transformers==4.34.1
+tokenizers==0.14.1
+robomimic==0.2.0
+robosuite @ https://github.com/cheng-chi/robosuite/archive/277ab9588ad7a4f4b55cf75508b44aa67ec171f0.tar.gz
+free-mujoco-py==2.1.6
+mujoco==3.2.6
+scikit-learn==1.6.1
+seaborn==0.13.2
+dm-control==1.0.9
+pytorchvideo==0.1.5
+tokenize_rt==6.1.0
+safetensors==0.7.0
+joblib==1.5.3
+egl-probe==1.0.2
+parameterized==0.9.0
+etils==1.5.2
+glfw==1.12.0
+PyOpenGL==3.1.10
+dm-env==1.6
+dm-tree==0.1.8
+labmaze==1.0.6
+lxml==6.1.2
+fasteners==0.15
+monotonic==1.6
