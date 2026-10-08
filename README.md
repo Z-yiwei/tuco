@@ -1,10 +1,10 @@
 <div align="center">
 
 <a href="https://tuco-curation.github.io/">
-  <img src="assets/tuco-icon.png" width="140" alt="TUCO logo">
+  <img src="assets/tuco-icon.png" width="100" alt="TUCO logo">
 </a>
 
-# TUCO: Curating Simulation Demonstrations for Sim-to-Real Robot Policy Co-Training
+<h1>TUCO: Curating Simulation Demonstrations for<br>Sim-to-Real Robot Policy Co-Training</h1>
 
 <p>
   Ning Zhu<sup>1,*</sup> &nbsp;·&nbsp;
@@ -17,7 +17,7 @@
   Jianfei Yang<sup>2,†</sup>
 </p>
 
-<p>
+<p><sub>
   <sup>1</sup>Stanford University &nbsp;·&nbsp;
   <sup>2</sup>Nanyang Technological University &nbsp;·&nbsp;
   <sup>3</sup>AXIS Robotics<br>
@@ -25,42 +25,39 @@
   <sup>5</sup>Fudan University &nbsp;·&nbsp;
   <sup>6</sup>University of California, Berkeley &nbsp;·&nbsp;
   <sup>7</sup>Shanghai Jiao Tong University
-</p>
+</sub></p>
 
-<sub><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>†</sup>Corresponding authors</sub>
+<p><sub><sup>*</sup>Equal contribution &nbsp;·&nbsp; <sup>†</sup>Corresponding authors</sub></p>
 
 <p>
   <a href="https://tuco-curation.github.io/">
-    <img src="https://img.shields.io/badge/Project-Homepage-6A3D9A?style=for-the-badge" alt="Project homepage">
+    <img src="https://img.shields.io/badge/Project-Homepage-2563EB?style=flat-square" alt="Project homepage">
   </a>
   <a href="https://arxiv.org/abs/2610.05407">
-    <img src="https://img.shields.io/badge/arXiv-2610.05407-B31B1B?style=for-the-badge&logo=arxiv&logoColor=white" alt="arXiv paper">
+    <img src="https://img.shields.io/badge/arXiv-2610.05407-B31B1B?style=flat-square&logo=arxiv&logoColor=white" alt="arXiv paper">
+  </a>
+  <a href="#-citation">
+    <img src="https://img.shields.io/badge/Cite-BibTeX-475569?style=flat-square" alt="Citation">
   </a>
 </p>
 
-<p><strong>Official implementation of TUCO.</strong></p>
-
 </div>
 
-## Abstract
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.05407">
+    <img src="assets/tuco_main_figure.jpg" width="100%" alt="TUCO method overview">
+  </a>
+</p>
+
+## 🔍 Abstract
 
 Simulation demonstrations can supplement scarce real-world data for robot policy co-training.
 However, the value of using data curation to actively select these demonstrations for sim-to-real co-training remains underexplored. Existing curation methods also lack a unified criterion for measuring trajectory-level utility and set-level coverage from closed-loop target behavior. To address these gaps, we present the first systematic study of data curation for sim-to-real robot policy co-training and propose **T**rajectory-level **U**tility and set-level **C**overage **O**ptimization (**TUCO**). TUCO uses influence functions to trace how each source demonstration affects target-domain scoring rollouts.
 Our key insight is that these effects can be decomposed into an overall contribution to target return and variation across rollouts, providing a common closed-loop basis for measuring trajectory utility and set coverage. We further propose a performance-aligned subset optimizer that combines these measures in a unified curation objective to reduce redundancy and select complementary demonstrations. Extensive experiments on RoboMimic and OmniReset establish the value of active simulation data curation for sim-to-real policy co-training and show that TUCO achieves state-of-the-art performance across single-simulator, sim-to-sim, and sim-to-real settings.
 
-<p align="center">
-  <a href="https://tuco-curation.github.io/">
-    <img src="assets/tuco_main_figure.jpg" width="100%" alt="TUCO method overview">
-  </a>
-</p>
-
-<p align="center"><em>Overview of TUCO.</em></p>
-
-
-
 ---
 
-## Environmental Setup
+## 📦 Environmental Setup
 
 Use Ubuntu, Conda. Run commands from the repository root.
 
@@ -80,7 +77,7 @@ bash scripts/setup_isaacsim.sh
 Environment specifications are provided in `environments/`. IsaacSim collection
 requires a system meeting the [IsaacSim requirements](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/requirements.html).
 
-## Data Preparation
+## 🗂️ Data Preparation
 
 ### Single-simulator
 
@@ -127,7 +124,7 @@ checkpoint, simulation datasets, and real-rollout paths in `sim2real.env`.
 > Matching Franka experts and reset/panel assets are not yet publicly released.
 > CupCake vision data collection is not yet supported.
 
-## Data Selection
+## 🎯 Data Selection
 
 ```bash
 # Single-simulator (cupid environment)
@@ -142,7 +139,7 @@ bash experiments/sim2sim/run.sh configs/launch/sim2sim.env select
 bash experiments/sim2real/run.sh configs/launch/sim2real.env select
 ```
 
-## Training
+## 🚀 Training
 
 ```bash
 # Single-simulator
@@ -157,7 +154,7 @@ bash experiments/sim2sim/run.sh configs/launch/sim2sim.env train
 bash experiments/sim2real/run.sh configs/launch/sim2real.env train
 ```
 
-## Evaluation
+## 📊 Evaluation
 
 ```bash
 # Single-simulator
@@ -169,7 +166,7 @@ conda activate omnireset_release
 bash experiments/sim2sim/run_eval.sh configs/launch/sim2sim.env
 ```
 
-## Citation
+## 📝 Citation
 
 If you find TUCO useful in your research, please cite our paper:
 
