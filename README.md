@@ -1,5 +1,9 @@
 <div align="center">
 
+<a href="https://tuco-curation.github.io/">
+  <img src="assets/tuco-icon.png" width="140" alt="TUCO logo">
+</a>
+
 # TUCO: Curating Simulation Demonstrations for Sim-to-Real Robot Policy Co-Training
 
 <p>
